@@ -38,8 +38,10 @@ class GameScene extends Phaser.Scene {
     constructor() {
         super('Game');
         this.playerEnergy = 3;
-        this.playerHP = 30;
-        this.enemyHP = 20;
+        this.playerMaxHP = 30;
+        this.playerHP = this.playerMaxHP;
+        this.enemyMaxHP = 20;
+        this.enemyHP = this.enemyMaxHP;
         this.gold = 0;
         this.deck = [
             { name: 'Attaque', type: 'attack', damage: 5 },
@@ -47,6 +49,8 @@ class GameScene extends Phaser.Scene {
             { name: 'Sort', type: 'attack', damage: 8 }
         ];
         this.hand = [];
+        this.drawPile = [];
+        this.discardPile = [];
         this.roomCount = 0;
         this.maxRooms = 5;
     }
@@ -55,7 +59,13 @@ class GameScene extends Phaser.Scene {
         this.hpText = this.add.text(10, 10, 'HP: ' + this.playerHP, { fontSize: '16px', color: '#fff' });
         this.energyText = this.add.text(10, 30, 'Énergie: ' + this.playerEnergy, { fontSize: '16px', color: '#fff' });
         this.goldText = this.add.text(10, 50, 'Or: ' + this.gold, { fontSize: '16px', color: '#fff' });
-        this.enemyText = this.add.text(10, 70, '', { fontSize: '16px', color: '#fff' });
+
+        this.playerHPBarBg = this.add.rectangle(150, 20, 104, 14, 0x550000).setOrigin(0, 0.5);
+        this.playerHPBar = this.add.rectangle(150, 20, 100, 10, 0xff0000).setOrigin(0, 0.5);
+
+        this.enemyText = this.add.text(600, 70, '', { fontSize: '16px', color: '#fff' });
+        this.enemyHPBarBg = this.add.rectangle(600, 20, 104, 14, 0x550000).setOrigin(0, 0.5);
+        this.enemyHPBar = this.add.rectangle(600, 20, 100, 10, 0xff0000).setOrigin(0, 0.5);
 
         this.endTurnButton = this.add.text(700, 550, 'Fin du tour', { fontSize: '24px', backgroundColor: '#333', padding: 10 })
             .setInteractive();
@@ -90,12 +100,16 @@ class GameScene extends Phaser.Scene {
         if (card.type === 'attack') {
             this.enemyHP -= card.damage;
             this.enemyText.setText('HP Ennemi: ' + this.enemyHP);
+            this.updateHPBars();
         }
         if (card.type === 'defense') {
             this.playerHP += 2;
             this.hpText.setText('HP: ' + this.playerHP);
+            this.updateHPBars();
         }
         // Handle other card types later
+        Phaser.Utils.Array.Remove(this.hand, card);
+        this.discardPile.push(card);
     }
 
     endPlayerTurn() {
@@ -114,14 +128,21 @@ class GameScene extends Phaser.Scene {
                 return;
             }
         }
+
+        // discard remaining hand
+        this.discardPile.push(...this.hand);
+        this.hand = [];
+
         this.playerEnergy = 3;
         this.energyText.setText('Énergie: ' + this.playerEnergy);
-        this.displayHand();
+
+        this.drawCards(5);
     }
 
     enemyAction() {
         this.playerHP -= 3;
         this.hpText.setText('HP: ' + this.playerHP);
+        this.updateHPBars();
     }
 
     startNextRoom() {
@@ -155,12 +176,35 @@ class GameScene extends Phaser.Scene {
         this.enemyHP = 20;
         this.playerEnergy = 3;
         this.enemyText.setText('HP Ennemi: ' + this.enemyHP);
-        this.drawHand();
+
+        if (this.enemySprite) this.enemySprite.destroy();
+        this.enemySprite = this.add.rectangle(650, 200, 80, 80, 0x888888);
+
+        this.drawPile = Phaser.Utils.Array.Shuffle([...this.deck]);
+        this.discardPile = [];
+        this.hand = [];
+
+        this.drawCards(5);
+        this.updateHPBars();
     }
 
-    drawHand() {
-        this.hand = Phaser.Utils.Array.Shuffle(this.deck).slice(0, 3);
+    drawCards(number) {
+        for (let i = 0; i < number; i++) {
+            if (this.drawPile.length === 0) {
+                if (this.discardPile.length === 0) break;
+                this.drawPile = Phaser.Utils.Array.Shuffle(this.discardPile);
+                this.discardPile = [];
+            }
+            this.hand.push(this.drawPile.pop());
+        }
         this.displayHand();
+    }
+
+    updateHPBars() {
+        const playerPercent = Phaser.Math.Clamp(this.playerHP / this.playerMaxHP, 0, 1);
+        const enemyPercent = Phaser.Math.Clamp(this.enemyHP / this.enemyMaxHP, 0, 1);
+        this.playerHPBar.width = 100 * playerPercent;
+        this.enemyHPBar.width = 100 * enemyPercent;
     }
 
     openMerchant() {
