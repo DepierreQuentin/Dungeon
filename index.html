@@ -1,0 +1,137 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Battler: The Sequel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="title-screen">
+            <h1>Card Battler: The Sequel</h1>
+            <button id="start-game">Start Game</button>
+            <button id="how-to-play">How to Play</button>
+        </div>
+
+        <div id="tutorial-screen" class="hidden">
+            <h2>How to Play</h2>
+            <p>Welcome to Card Battler: The Sequel! Here's how to play:</p>
+            <ul>
+                <li>Build a deck of powerful cards</li>
+                <li>Use energy to play cards each turn</li>
+                <li>Defeat enemies to progress through battles</li>
+                <li>Earn new cards after each victory</li>
+                <li>Create powerful card combinations</li>
+            </ul>
+            <button id="tutorial-back">Back to Menu</button>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <div id="battle-area">
+                <div id="enemy-section">
+                    <div id="enemy-stats">
+                        <div id="enemy-name">Enemy Name</div>
+                        <div id="enemy-health-container">
+                            <div id="enemy-health">HP: 50/50</div>
+                            <div id="enemy-health-bar"></div>
+                        </div>
+                        <div id="enemy-intent">Intent: Attack 10</div>
+                    </div>
+                    <div id="enemy-display">
+                        <img id="enemy-image" src="" alt="Enemy">
+                    </div>
+                </div>
+
+                <div id="battle-log"></div>
+
+                <div id="player-section">
+                    <div id="player-stats">
+                        <div id="player-name">Player</div>
+                        <div id="player-health-container">
+                            <div id="player-health">HP: 100/100</div>
+                            <div id="player-health-bar"></div>
+                        </div>
+                        <div id="player-energy">Energy: 3/3</div>
+                        <div id="player-block">Block: 0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="cards-with-button">
+                <div id="action-buttons">
+                <button id="end-turn-button">End Turn</button>
+                </div>
+                <div id="card-area">
+                <div id="deck-pile" class="card-pile">
+                    <div class="pile-count">20</div>
+                </div>
+                <div id="hand-container"></div>
+                <div id="discard-pile" class="card-pile">
+                    <div class="pile-count">0</div>
+                </div>
+                </div>
+            </div>
+
+            <div id="game-buttons">
+                <button id="trading-button">Trading</button>
+                <button id="achievements-button">Achievements</button>
+            </div>
+        </div>
+
+        <div id="reward-screen" class="hidden">
+            <h2>Victory!</h2>
+            <p>Choose a card to add to your deck:</p>
+            <div id="reward-cards"></div>
+            <button id="skip-reward">Skip Reward</button>
+        </div>
+
+        <div id="game-over-screen" class="hidden">
+            <h2>Game Over</h2>
+            <p id="game-over-message">You were defeated!</p>
+            <p id="final-score">You defeated 0 enemies</p>
+            <button id="play-again">Play Again</button>
+        </div>
+
+        <div id="trading-screen" class="hidden">
+            <h2>Card Trading</h2>
+            <div id="trading-options">
+                <div id="player-trade-cards"></div>
+                <div id="merchant-trade-cards"></div>
+            </div>
+            <button id="close-trading">Close Trading</button>
+        </div>
+
+        <div id="achievement-screen" class="hidden">
+            <h2>Achievements</h2>
+            <div id="achievement-list"></div>
+            <button id="close-achievements">Close</button>
+        </div>
+    </div>
+
+    <div id="achievement-notification" class="hidden">
+        <img src="achievement_icon.png" alt="Achievement">
+        <div class="achievement-text">
+            <h3></h3>
+            <p></p>
+        </div>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.2/+esm"
+        }
+    }
+    </script>
+    <script type="module" src="cards.js"></script>
+    <script type="module" src="enemies.js"></script>
+    <script type="module" src="game.js"></script>
+    <button id="card-index-button">Card Index</button>
+    <div class="card-backdrop"></div>
+    <div id="card-index-screen">
+        <button id="card-index-close">×</button>
+        <h2>Card Collection</h2>
+        <div id="card-index-content"></div>
+    </div>
+</body>
+</html>
