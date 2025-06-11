@@ -6,7 +6,7 @@
 }
 
 body {
-    background: url('background.png') no-repeat center center fixed;
+    background: url('images/background.png') no-repeat center center fixed;
     background-size: cover;
     color: #ffffff;
     min-height: 100vh;
@@ -322,95 +322,95 @@ body {
 }
 
 .card[data-card-name="Strike"]::before {
-    background-image: url('card_strike.png');
+    background-image: url('images/card_strike.png');
 }
 
 .card[data-card-name="Defend"]::before {
-    background-image: url('card_defend.png');
+    background-image: url('images/card_defend.png');
 }
 
 .card[data-card-name="Heavy Blow"]::before {
-    background-image: url('card_heavy_blow.png');
+    background-image: url('images/card_heavy_blow.png');
 }
 
 .card[data-card-name="Quick Slash"]::before {
-    background-image: url('card_quick_slash.png');
+    background-image: url('images/card_quick_slash.png');
 }
 
 .card[data-card-name="Cleave"]::before {
-    background-image: url('card_cleave.png');
+    background-image: url('images/card_cleave.png');
 }
 
 .card[data-card-name="Bash"]::before {
-    background-image: url('card_bash.png');
+    background-image: url('images/card_bash.png');
 }
 
 .card[data-card-name="Dodge"]::before {
-    background-image: url('card_dodge.png');
+    background-image: url('images/card_dodge.png');
 }
 
 .card[data-card-name="Second Wind"]::before {
-    background-image: url('card_second_wind.png');
+    background-image: url('images/card_second_wind.png');
 }
 
 .card[data-card-name="Backflip"]::before {
-    background-image: url('card_backflip.png');
+    background-image: url('images/card_backflip.png');
 }
 
 .card[data-card-name="Barricade"]::before {
-    background-image: url('card_barricade.png');
+    background-image: url('images/card_barricade.png');
 }
 
 .card[data-card-name="Inflame"]::before {
-    background-image: url('card_inflame.png');
+    background-image: url('images/card_inflame.png');
 }
 
 .card[data-card-name="Demon Form"]::before {
-    background-image: url('card_demon_form.png');
+    background-image: url('images/card_demon_form.png');
 }
 
 .card[data-card-name="Metallicize"]::before {
-    background-image: url('card_metallicize.png');
+    background-image: url('images/card_metallicize.png');
 }
 
 .card[data-card-name="Energize"]::before {
-    background-image: url('card_energize.png');
+    background-image: url('images/card_energize.png');
 }
 
 .card[data-card-name="Battle Trance"]::before {
-    background-image: url('card_battle_trance.png');
+    background-image: url('images/card_battle_trance.png');
 }
 
 .card[data-card-name="Fire Blast"]::before {
-    background-image: url('card_fire_blast.png');
+    background-image: url('images/card_fire_blast.png');
 }
 
 .card[data-card-name="Ice Shield"]::before {
-    background-image: url('card_ice_shield.png');
+    background-image: url('images/card_ice_shield.png');
 }
 
 .card[data-card-name="Thunder Strike"]::before {
-    background-image: url('card_thunder_strike.png');
+    background-image: url('images/card_thunder_strike.png');
 }
 
 .card[data-card-name="Vampiric Strike"]::before {
-    background-image: url('card_vampiric_strike.png');
+    background-image: url('images/card_vampiric_strike.png');
 }
 
 .card[data-card-name="Whirlwind"]::before {
-    background-image: url('card_whirlwind.png');
+    background-image: url('images/card_whirlwind.png');
 }
 
 .card[data-card-name="Berserk"]::before {
-    background-image: url('card_berserk.png');
+    background-image: url('images/card_berserk.png');
 }
 
 .card[data-card-name="Meditation"]::before {
-    background-image: url('card_meditation.png');
+    background-image: url('images/card_meditation.png');
 }
 
 .card[data-card-name="Trade Master"]::before {
-    background-image: url('card_trade.png');
+    background-image: url('images/card_trade.png');
 }
 
 .card:hover {
@@ -629,7 +629,7 @@ body {
     width: 90%;
     max-width: 1200px;
     height: 90vh;
-    background: url('card_index_bg.png') no-repeat center;
+    background: url('images/card_index_bg.png') no-repeat center;
     background-size: cover;
     padding: 30px;
     border-radius: 20px;
@@ -702,7 +702,7 @@ body {
     width: 90%;
     max-width: 1000px;
     height: 80vh;
-    background: url('card_index_bg.png') no-repeat center;
+    background: url('images/card_index_bg.png') no-repeat center;
     background-size: cover;
     padding: 30px;
     border-radius: 20px;

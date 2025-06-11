@@ -136,7 +136,7 @@ class CardGame {
         
         // Set enemy image based on name
         const enemyImageName = this.currentEnemy.name.toLowerCase().replace(' ', '_');
-        this.enemyImageElement.src = `enemy_${enemyImageName}.png`;
+        this.enemyImageElement.src = `images/enemy_${enemyImageName}.png`;
         
         // Choose enemy's first move
         this.currentEnemy.chooseNextMove();
@@ -676,7 +676,7 @@ class CardGame {
             const achievementElement = document.createElement('div');
             achievementElement.className = `achievement-item ${achievement.unlocked ? 'unlocked' : ''}`;
             achievementElement.innerHTML = `
-                <img src="achievement_icon.png" alt="Achievement">
+                <img src="images/achievement_icon.png" alt="Achievement">
                 <div>
                     <h3>${achievement.name}</h3>
                     <p>${achievement.description}</p>
