@@ -27,6 +27,7 @@ class CardGame {
         this.tradesCompleted = 0;
         this.cardsPlayedThisTurn = 0;
         this.achievements = [...achievements];
+        this.inMerchantRoom = false;
         
         this.initializeGame();
     }
@@ -38,6 +39,8 @@ class CardGame {
         this.titleScreen = document.getElementById('title-screen');
         this.tutorialScreen = document.getElementById('tutorial-screen');
         this.gameScreen = document.getElementById('game-screen');
+        this.dungeonScreen = document.getElementById('dungeon-screen');
+        this.eventScreen = document.getElementById('event-screen');
         this.rewardScreen = document.getElementById('reward-screen');
         this.gameOverScreen = document.getElementById('game-over-screen');
         this.tradingScreen = document.getElementById('trading-screen');
@@ -58,9 +61,16 @@ class CardGame {
         this.deckPile = document.getElementById('deck-pile');
         this.discardPileElement = document.getElementById('discard-pile');
         this.battleLogElement = document.getElementById('battle-log');
+
+        this.goldDisplay = document.getElementById('gold-display');
+
+        this.roomOptionsElement = document.getElementById('room-options');
+        this.upcoming1Element = document.getElementById('upcoming-1');
+        this.upcoming2Element = document.getElementById('upcoming-2');
+        this.eventTextElement = document.getElementById('event-text');
         
         this.endTurnButton = document.getElementById('end-turn-button');
-        this.rewardCardsContainer = document.getElementById('reward-cards');
+        this.rewardTextElement = document.getElementById('reward-text');
         this.tradingButton = document.getElementById('trading-button');
         this.achievementsButton = document.getElementById('achievements-button');
         
@@ -69,12 +79,20 @@ class CardGame {
         document.getElementById('how-to-play').addEventListener('click', () => this.showTutorial());
         document.getElementById('tutorial-back').addEventListener('click', () => this.showTitleScreen());
         this.endTurnButton.addEventListener('click', () => this.endPlayerTurn());
-        document.getElementById('skip-reward').addEventListener('click', () => this.startNextBattle());
+        document.getElementById('reward-continue').addEventListener('click', () => this.startNextRoom());
+        document.getElementById('event-continue').addEventListener('click', () => {
+            this.eventScreen.classList.add('hidden');
+            this.showDungeonScreen();
+        });
         document.getElementById('play-again').addEventListener('click', () => this.resetGame());
         this.tradingButton.addEventListener('click', () => this.showTradingScreen());
         this.achievementsButton.addEventListener('click', () => this.showAchievementScreen());
         document.getElementById('close-trading').addEventListener('click', () => {
             document.getElementById('trading-screen').classList.add('hidden');
+            if (this.inMerchantRoom) {
+                this.inMerchantRoom = false;
+                this.showDungeonScreen();
+            }
         });
         document.getElementById('close-achievements').addEventListener('click', () => {
             document.getElementById('achievement-screen').classList.add('hidden');
@@ -89,10 +107,13 @@ class CardGame {
         this.titleScreen.classList.remove('hidden');
         this.tutorialScreen.classList.add('hidden');
         this.gameScreen.classList.add('hidden');
+        this.dungeonScreen.classList.add('hidden');
+        this.eventScreen.classList.add('hidden');
         this.rewardScreen.classList.add('hidden');
         this.gameOverScreen.classList.add('hidden');
         this.tradingScreen.classList.add('hidden');
         this.achievementScreen.classList.add('hidden');
+        this.goldDisplay.classList.add('hidden');
     }
     
     // Show tutorial screen
@@ -107,12 +128,72 @@ class CardGame {
         this.deck = createStarterDeck();
         this.playerHp = this.playerMaxHp;
         this.enemiesDefeated = 0;
+        this.gold = 100;
+        this.updateGoldDisplay();
         
         this.titleScreen.classList.add('hidden');
-        this.gameScreen.classList.remove('hidden');
-        
-        // Start first battle
-        this.startNewBattle();
+        this.goldDisplay.classList.remove('hidden');
+
+        this.initializeRoomQueue();
+        this.showDungeonScreen();
+    }
+
+    // Initialize room queue with 5 rooms
+    initializeRoomQueue() {
+        this.roomQueue = [];
+        for (let i = 0; i < 5; i++) {
+            this.roomQueue.push(this.generateRandomRoom());
+        }
+        this.updateGoldDisplay();
+    }
+
+    // Generate a random room type
+    generateRandomRoom() {
+        const roll = Math.random();
+        if (roll < 0.6) return 'combat';
+        if (roll < 0.9) return 'event';
+        return 'merchant';
+    }
+
+    // Show dungeon screen with room options
+    showDungeonScreen() {
+        this.gameScreen.classList.add('hidden');
+        this.rewardScreen.classList.add('hidden');
+        this.eventScreen.classList.add('hidden');
+        this.dungeonScreen.classList.remove('hidden');
+
+        this.roomOptionsElement.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+            const type = this.roomQueue[i];
+            const btn = document.createElement('button');
+            btn.className = 'room-button';
+            btn.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+            btn.addEventListener('click', () => this.enterRoom(i));
+            this.roomOptionsElement.appendChild(btn);
+        }
+
+        this.upcoming1Element.textContent = this.roomQueue[3].charAt(0).toUpperCase() + this.roomQueue[3].slice(1);
+        this.upcoming2Element.textContent = this.roomQueue[4].charAt(0).toUpperCase() + this.roomQueue[4].slice(1);
+    }
+
+    // Enter selected room
+    enterRoom(index) {
+        const room = this.roomQueue.splice(index, 1)[0];
+        while (this.roomQueue.length < 5) {
+            this.roomQueue.push(this.generateRandomRoom());
+        }
+
+        if (room === 'combat') {
+            this.dungeonScreen.classList.add('hidden');
+            this.gameScreen.classList.remove('hidden');
+            this.startNewBattle();
+        } else if (room === 'event') {
+            this.dungeonScreen.classList.add('hidden');
+            this.startRandomEvent();
+        } else if (room === 'merchant') {
+            this.dungeonScreen.classList.add('hidden');
+            this.showTradingScreen(true);
+        }
     }
     
     // Start a new battle
@@ -152,6 +233,14 @@ class CardGame {
         this.addToBattleLog(`Battle with ${this.currentEnemy.name} begins!`);
         
         this.battleActive = true;
+    }
+
+    // Start a random event
+    startRandomEvent() {
+        this.eventScreen.classList.remove('hidden');
+        const gold = 10 + Math.floor(Math.random() * 11); // 10-20 gold
+        this.addGold(gold);
+        this.eventTextElement.textContent = `You found a treasure chest with ${gold} gold!`;
     }
     
     // Update enemy health display
@@ -398,6 +487,18 @@ class CardGame {
         this.addToBattleLog(`You gained ${amount} Energy.`);
         this.updatePlayerStats();
     }
+
+    // Add gold to player
+    addGold(amount) {
+        this.gold += amount;
+        this.updateGoldDisplay();
+    }
+
+    updateGoldDisplay() {
+        if (this.goldDisplay) {
+            this.goldDisplay.textContent = `Gold: ${this.gold}`;
+        }
+    }
     
     // Apply status effect to player
     applyPlayerStatus(status, value) {
@@ -542,26 +643,13 @@ class CardGame {
         return false;
     }
     
-    // Show reward screen with card rewards
+    // Show reward screen with gold reward
     showRewardScreen() {
         this.gameScreen.classList.add('hidden');
         this.rewardScreen.classList.remove('hidden');
-        
-        // Generate 3 random card rewards
-        const rewardCards = getRewardCards();
-        this.rewardCardsContainer.innerHTML = '';
-        
-        rewardCards.forEach(card => {
-            const cardElement = card.createCardElement();
-            
-            // Add click event to add card to deck
-            cardElement.addEventListener('click', () => {
-                this.addCardToDeck(card);
-                this.startNextBattle();
-            });
-            
-            this.rewardCardsContainer.appendChild(cardElement);
-        });
+        const goldReward = 20 + Math.floor(Math.random() * 11); // 20-30 gold
+        this.addGold(goldReward);
+        this.rewardTextElement.textContent = `You gained ${goldReward} gold!`;
     }
     
     // Add a card to player's deck
@@ -571,10 +659,9 @@ class CardGame {
     }
     
     // Start the next battle
-    startNextBattle() {
+    startNextRoom() {
         this.rewardScreen.classList.add('hidden');
-        this.gameScreen.classList.remove('hidden');
-        this.startNewBattle();
+        this.showDungeonScreen();
     }
     
     // Show game over screen
@@ -619,7 +706,8 @@ class CardGame {
     }
     
     // Show trading screen
-    showTradingScreen() {
+    showTradingScreen(fromMerchant = false) {
+        this.inMerchantRoom = fromMerchant;
         const tradingScreen = document.getElementById('trading-screen');
         tradingScreen.classList.remove('hidden');
         this.updateTradingOptions();

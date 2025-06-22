@@ -791,3 +791,44 @@ body {
 #game-buttons button:hover {
     background: #2d3748;
 }
+
+/* Dungeon and Event Screens */
+#dungeon-screen, #event-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 560px;
+    gap: 20px;
+    text-align: center;
+}
+
+#room-options {
+    display: flex;
+    gap: 20px;
+}
+
+.room-button {
+    padding: 15px 30px;
+    background: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.room-button:hover {
+    background: #2d3748;
+}
+
+#gold-display {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #ffd700;
+}
