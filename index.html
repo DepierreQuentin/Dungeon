@@ -31,7 +31,10 @@
         <div id="dungeon-screen" class="hidden">
             <h2>Choose Your Room</h2>
             <div id="room-options"></div>
-            <div id="upcoming-rooms">Upcoming: <span id="upcoming-1"></span> -> <span id="upcoming-2"></span></div>
+            <div id="upcoming-rooms">
+                <div>Next Rooms: <span id="upcoming-set1"></span></div>
+                <div>Following Rooms: <span id="upcoming-set2"></span></div>
+            </div>
         </div>
 
         <div id="game-screen" class="hidden">
@@ -106,6 +109,23 @@
                 <div id="merchant-trade-cards"></div>
             </div>
             <button id="close-trading">Close Trading</button>
+        </div>
+
+        <div id="merchant-screen" class="hidden">
+            <h2>Merchant</h2>
+            <div id="pack-options"></div>
+            <button id="close-merchant">Close</button>
+        </div>
+
+        <div id="pack-screen" class="hidden">
+            <h2>Pack Contents</h2>
+            <div id="pack-cards"></div>
+            <button id="pack-continue">Continue</button>
+        </div>
+
+        <div id="rest-screen" class="hidden">
+            <p id="rest-text"></p>
+            <button id="rest-continue">Continue</button>
         </div>
 
         <div id="event-screen" class="hidden">
