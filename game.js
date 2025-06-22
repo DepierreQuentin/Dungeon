@@ -28,6 +28,7 @@ class CardGame {
         this.cardsPlayedThisTurn = 0;
         this.achievements = [...achievements];
         this.inMerchantRoom = false;
+        this.pendingAmbush = false;
         
         this.initializeGame();
     }
@@ -44,6 +45,9 @@ class CardGame {
         this.rewardScreen = document.getElementById('reward-screen');
         this.gameOverScreen = document.getElementById('game-over-screen');
         this.tradingScreen = document.getElementById('trading-screen');
+        this.merchantScreen = document.getElementById('merchant-screen');
+        this.packScreen = document.getElementById('pack-screen');
+        this.restScreen = document.getElementById('rest-screen');
         this.achievementScreen = document.getElementById('achievement-screen');
         
         this.enemyNameElement = document.getElementById('enemy-name');
@@ -65,8 +69,8 @@ class CardGame {
         this.goldDisplay = document.getElementById('gold-display');
 
         this.roomOptionsElement = document.getElementById('room-options');
-        this.upcoming1Element = document.getElementById('upcoming-1');
-        this.upcoming2Element = document.getElementById('upcoming-2');
+        this.upcoming1Element = document.getElementById('upcoming-set1');
+        this.upcoming2Element = document.getElementById('upcoming-set2');
         this.eventTextElement = document.getElementById('event-text');
         
         this.endTurnButton = document.getElementById('end-turn-button');
@@ -82,7 +86,13 @@ class CardGame {
         document.getElementById('reward-continue').addEventListener('click', () => this.startNextRoom());
         document.getElementById('event-continue').addEventListener('click', () => {
             this.eventScreen.classList.add('hidden');
-            this.showDungeonScreen();
+            if (this.pendingAmbush) {
+                this.pendingAmbush = false;
+                this.gameScreen.classList.remove('hidden');
+                this.startNewBattle();
+            } else {
+                this.showDungeonScreen();
+            }
         });
         document.getElementById('play-again').addEventListener('click', () => this.resetGame());
         this.tradingButton.addEventListener('click', () => this.showTradingScreen());
@@ -93,6 +103,25 @@ class CardGame {
                 this.inMerchantRoom = false;
                 this.showDungeonScreen();
             }
+        });
+        document.getElementById('close-merchant').addEventListener('click', () => {
+            this.merchantScreen.classList.add('hidden');
+            if (this.inMerchantRoom) {
+                this.inMerchantRoom = false;
+                this.showDungeonScreen();
+            }
+        });
+        document.getElementById('pack-continue').addEventListener('click', () => {
+            this.packScreen.classList.add('hidden');
+            if (this.inMerchantRoom) {
+                this.showMerchantScreen();
+            } else {
+                this.showDungeonScreen();
+            }
+        });
+        document.getElementById('rest-continue').addEventListener('click', () => {
+            this.restScreen.classList.add('hidden');
+            this.showDungeonScreen();
         });
         document.getElementById('close-achievements').addEventListener('click', () => {
             document.getElementById('achievement-screen').classList.add('hidden');
@@ -138,10 +167,10 @@ class CardGame {
         this.showDungeonScreen();
     }
 
-    // Initialize room queue with 5 rooms
+    // Initialize room queue with 9 rooms
     initializeRoomQueue() {
         this.roomQueue = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 9; i++) {
             this.roomQueue.push(this.generateRandomRoom());
         }
         this.updateGoldDisplay();
@@ -150,9 +179,10 @@ class CardGame {
     // Generate a random room type
     generateRandomRoom() {
         const roll = Math.random();
-        if (roll < 0.6) return 'combat';
-        if (roll < 0.9) return 'event';
-        return 'merchant';
+        if (roll < 0.5) return 'combat';
+        if (roll < 0.8) return 'event';
+        if (roll < 0.9) return 'merchant';
+        return 'rest';
     }
 
     // Show dungeon screen with room options
@@ -172,14 +202,16 @@ class CardGame {
             this.roomOptionsElement.appendChild(btn);
         }
 
-        this.upcoming1Element.textContent = this.roomQueue[3].charAt(0).toUpperCase() + this.roomQueue[3].slice(1);
-        this.upcoming2Element.textContent = this.roomQueue[4].charAt(0).toUpperCase() + this.roomQueue[4].slice(1);
+        const set1 = this.roomQueue.slice(3, 6).map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+        const set2 = this.roomQueue.slice(6, 9).map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');
+        this.upcoming1Element.textContent = set1;
+        this.upcoming2Element.textContent = set2;
     }
 
     // Enter selected room
     enterRoom(index) {
         const room = this.roomQueue.splice(index, 1)[0];
-        while (this.roomQueue.length < 5) {
+        while (this.roomQueue.length < 9) {
             this.roomQueue.push(this.generateRandomRoom());
         }
 
@@ -192,7 +224,10 @@ class CardGame {
             this.startRandomEvent();
         } else if (room === 'merchant') {
             this.dungeonScreen.classList.add('hidden');
-            this.showTradingScreen(true);
+            this.showMerchantScreen(true);
+        } else if (room === 'rest') {
+            this.dungeonScreen.classList.add('hidden');
+            this.showRestScreen();
         }
     }
     
@@ -238,9 +273,31 @@ class CardGame {
     // Start a random event
     startRandomEvent() {
         this.eventScreen.classList.remove('hidden');
-        const gold = 10 + Math.floor(Math.random() * 11); // 10-20 gold
-        this.addGold(gold);
-        this.eventTextElement.textContent = `You found a treasure chest with ${gold} gold!`;
+        this.pendingAmbush = false;
+        const roll = Math.random();
+        if (roll < 0.4) {
+            const gold = 10 + Math.floor(Math.random() * 11);
+            this.addGold(gold);
+            this.eventTextElement.textContent = `You found a treasure chest with ${gold} gold!`;
+        } else if (roll < 0.7) {
+            const damage = 5 + Math.floor(Math.random() * 6);
+            this.dealDamageToPlayer(damage);
+            this.eventTextElement.textContent = `A trap deals ${damage} damage!`;
+        } else if (roll < 0.9) {
+            const cost = 20;
+            const card = getRandomCard();
+            if (this.gold >= cost) {
+                this.gold -= cost;
+                this.updateGoldDisplay();
+                this.addCardToDeck(card);
+                this.eventTextElement.textContent = `You pay ${cost} gold and receive ${card.name}!`;
+            } else {
+                this.eventTextElement.textContent = `A dealer offers ${card.name} for ${cost} gold, but you can't afford it.`;
+            }
+        } else {
+            this.pendingAmbush = true;
+            this.eventTextElement.textContent = 'You are ambushed by an enemy!';
+        }
     }
     
     // Update enemy health display
@@ -417,14 +474,16 @@ class CardGame {
     
     // Deal damage to the player
     dealDamageToPlayer(amount) {
-        // Apply enemy strength if they have it
-        if (this.currentEnemy.statuses.strength > 0) {
-            amount += this.currentEnemy.statuses.strength;
-        }
-        
-        // Apply weak status effect
-        if (this.currentEnemy.statuses.weak > 0) {
-            amount = Math.floor(amount * 0.75);
+        if (this.currentEnemy) {
+            // Apply enemy strength if they have it
+            if (this.currentEnemy.statuses.strength > 0) {
+                amount += this.currentEnemy.statuses.strength;
+            }
+
+            // Apply weak status effect
+            if (this.currentEnemy.statuses.weak > 0) {
+                amount = Math.floor(amount * 0.75);
+            }
         }
         
         // Apply player vulnerable status
@@ -752,6 +811,60 @@ class CardGame {
                 this.checkAchievements();
             });
         });
+    }
+
+    // Show merchant screen with card packs
+    showMerchantScreen(fromDungeon = false) {
+        this.inMerchantRoom = fromDungeon;
+        this.merchantScreen.classList.remove('hidden');
+        this.updatePackOptions();
+    }
+
+    // Generate pack options
+    updatePackOptions() {
+        const container = document.getElementById('pack-options');
+        container.innerHTML = '';
+        const packs = [
+            { name: 'Small Pack', size: 2, price: 20 },
+            { name: 'Medium Pack', size: 3, price: 35 },
+            { name: 'Large Pack', size: 5, price: 60 }
+        ];
+        packs.forEach(pack => {
+            const btn = document.createElement('button');
+            btn.className = 'pack-button';
+            btn.textContent = `${pack.name} - ${pack.price} gold`;
+            btn.addEventListener('click', () => this.purchasePack(pack));
+            container.appendChild(btn);
+        });
+    }
+
+    // Purchase a pack of cards
+    purchasePack(pack) {
+        if (this.gold < pack.price) return;
+        this.gold -= pack.price;
+        this.updateGoldDisplay();
+        const cards = [];
+        for (let i = 0; i < pack.size; i++) {
+            cards.push(getRandomCard());
+        }
+        const packCardsDiv = document.getElementById('pack-cards');
+        packCardsDiv.innerHTML = '';
+        cards.forEach(card => {
+            const el = card.createCardElement();
+            packCardsDiv.appendChild(el);
+            this.addCardToDeck(card);
+        });
+        this.merchantScreen.classList.add('hidden');
+        this.packScreen.classList.remove('hidden');
+    }
+
+    // Show rest screen and heal player
+    showRestScreen() {
+        const heal = Math.ceil(this.playerMaxHp * 0.3);
+        this.playerHp = Math.min(this.playerHp + heal, this.playerMaxHp);
+        this.updatePlayerStats();
+        document.getElementById('rest-text').textContent = `You recovered ${heal} HP.`;
+        this.restScreen.classList.remove('hidden');
     }
     
     // Show achievement screen
