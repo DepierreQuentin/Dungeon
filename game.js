@@ -67,6 +67,7 @@ class CardGame {
         this.battleLogElement = document.getElementById('battle-log');
 
         this.goldDisplay = document.getElementById('gold-display');
+        this.hpDisplay = document.getElementById('hp-display');
 
         this.roomOptionsElement = document.getElementById('room-options');
         this.upcoming1Element = document.getElementById('upcoming-set1');
@@ -143,6 +144,7 @@ class CardGame {
         this.tradingScreen.classList.add('hidden');
         this.achievementScreen.classList.add('hidden');
         this.goldDisplay.classList.add('hidden');
+        this.hpDisplay.classList.add('hidden');
     }
     
     // Show tutorial screen
@@ -162,6 +164,8 @@ class CardGame {
         
         this.titleScreen.classList.add('hidden');
         this.goldDisplay.classList.remove('hidden');
+        this.hpDisplay.classList.remove('hidden');
+        this.updateHpDisplay();
 
         this.initializeRoomQueue();
         this.showDungeonScreen();
@@ -332,6 +336,7 @@ class CardGame {
         
         this.playerEnergyElement.textContent = `Energy: ${this.playerEnergy}/${this.playerMaxEnergy}`;
         this.playerBlockElement.textContent = `Block: ${this.playerBlock}`;
+        this.updateHpDisplay();
     }
     
     // Update card piles display
@@ -564,6 +569,12 @@ class CardGame {
     updateGoldDisplay() {
         if (this.goldDisplay) {
             this.goldDisplay.textContent = `Gold: ${this.gold}`;
+        }
+    }
+
+    updateHpDisplay() {
+        if (this.hpDisplay) {
+            this.hpDisplay.textContent = `HP: ${this.playerHp}/${this.playerMaxHp}`;
         }
     }
     
@@ -868,7 +879,7 @@ class CardGame {
 
     // Show rest screen and heal player
     showRestScreen() {
-        const heal = Math.ceil(this.playerMaxHp * 0.3);
+        const heal = Math.ceil(this.playerHp * 0.3);
         this.playerHp = Math.min(this.playerHp + heal, this.playerMaxHp);
         this.updatePlayerStats();
         document.getElementById('rest-text').textContent = `You recovered ${heal} HP.`;
