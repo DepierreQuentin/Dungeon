@@ -179,7 +179,7 @@ class CardGame {
     // Generate a random room type
     generateRandomRoom() {
         const roll = Math.random();
-        if (roll < 0.5) return 'combat';
+        if (roll < 0.6) return 'combat';
         if (roll < 0.8) return 'event';
         if (roll < 0.9) return 'merchant';
         return 'rest';
