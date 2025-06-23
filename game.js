@@ -210,7 +210,15 @@ class CardGame {
 
     // Enter selected room
     enterRoom(index) {
-        const room = this.roomQueue.splice(index, 1)[0];
+        // Get the room type the player selected from the first set of options
+        const room = this.roomQueue[index];
+
+        // Remove the entire current set of options so the next two sets remain
+        // exactly as previewed to the player
+        this.roomQueue.splice(0, 3);
+
+        // Replenish the queue with three new random rooms to keep nine rooms in
+        // the queue at all times
         while (this.roomQueue.length < 9) {
             this.roomQueue.push(this.generateRandomRoom());
         }
