@@ -182,8 +182,8 @@ body {
 
 #enemy-display {
     position: absolute;
-    top: 45%;
-    left: 43%;
+    top: 50%;
+    left: 44%;
     transform: translate(-10%, -10%);
     height: 250px;
     display: flex;
