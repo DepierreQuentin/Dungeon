@@ -110,6 +110,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 660px;
+    background: url('images/rooms/room_combat.png') no-repeat center;
+    background-size: cover;
 }
 
 #battle-area {
@@ -706,7 +708,7 @@ body {
 }
 
 /* Additional styles */
-#trading-screen, #achievement-screen, #merchant-screen, #pack-screen, #deck-screen {
+#trading-screen, #achievement-screen, #pack-screen, #deck-screen {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -715,6 +717,21 @@ body {
     max-width: 1000px;
     height: 80vh;
     background: url('images/card_index_bg.png') no-repeat center;
+    background-size: cover;
+    padding: 30px;
+    border-radius: 20px;
+    z-index: 100;
+}
+
+#merchant-screen {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    background: url('images/rooms/room_merchant.png') no-repeat center;
     background-size: cover;
     padding: 30px;
     border-radius: 20px;
@@ -819,15 +836,25 @@ body {
     text-align: center;
 }
 
+#event-screen {
+    background: url('images/rooms/room_event_chest.png') no-repeat center;
+    background-size: cover;
+}
+
 /* Specific background for the room selection screen */
 #dungeon-screen {
     background: url('images/Choose_room.png') no-repeat center;
     background-size: cover;
+    justify-content: flex-start;
+    padding-top: 20px;
 }
 
 #room-options {
     display: flex;
     gap: 20px;
+    width: 100%;
+    justify-content: space-around;
+    margin-top: 20px;
 }
 
 .room-button {
@@ -987,6 +1014,8 @@ body {
     height: 560px;
     gap: 20px;
     text-align: center;
+    background: url('images/rooms/room_rest.png') no-repeat center;
+    background-size: cover;
 }
 
 #merchant-screen button:hover, #pack-screen button:hover, #event-buttons button:hover {

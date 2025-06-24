@@ -220,6 +220,7 @@ class CardGame {
         this.rewardScreen.classList.add('hidden');
         this.eventScreen.classList.add('hidden');
         this.dungeonScreen.classList.remove('hidden');
+        this.dungeonScreen.style.background = "url('images/Choose_room.png') no-repeat center / cover";
 
         this.roomOptionsElement.innerHTML = '';
         for (let i = 0; i < 3; i++) {
@@ -290,6 +291,8 @@ class CardGame {
         // Set enemy image based on name
         const enemyImageName = this.currentEnemy.name.toLowerCase().replace(' ', '_');
         this.enemyImageElement.src = `images/enemy_${enemyImageName}.png`;
+
+        this.gameScreen.style.background = "url('images/rooms/room_combat.png') no-repeat center / cover";
         
         // Choose enemy's first move
         this.currentEnemy.chooseNextMove();
@@ -316,10 +319,12 @@ class CardGame {
             const gold = 10 + Math.floor(Math.random() * 11);
             this.addGold(gold);
             this.eventTextElement.textContent = `You found a treasure chest with ${gold} gold!`;
+            this.eventScreen.style.background = "url('images/rooms/room_event_chest.png') no-repeat center / cover";
         } else if (roll < 0.7) {
             const damage = 5 + Math.floor(Math.random() * 6);
             this.dealDamageToPlayer(damage);
             this.eventTextElement.textContent = `A trap deals ${damage} damage!`;
+            this.eventScreen.style.background = "url('images/rooms/room_event_trap.png') no-repeat center / cover";
         } else if (roll < 0.9) {
             this.eventCardCost = 20;
             this.eventCardForSale = getRandomCard();
@@ -329,9 +334,11 @@ class CardGame {
             } else {
                 this.eventTextElement.textContent = `A dealer offers ${this.eventCardForSale.name} for ${this.eventCardCost} gold, but you can't afford it.`;
             }
+            this.eventScreen.style.background = "url('images/rooms/room_event_card.png') no-repeat center / cover";
         } else {
             this.pendingAmbush = true;
             this.eventTextElement.textContent = 'You are ambushed by an enemy!';
+            this.eventScreen.style.background = "url('images/rooms/room_combat.png') no-repeat center / cover";
         }
     }
 
@@ -878,6 +885,7 @@ class CardGame {
     showMerchantScreen(fromDungeon = false) {
         this.inMerchantRoom = fromDungeon;
         this.merchantScreen.classList.remove('hidden');
+        this.merchantScreen.style.background = "url('images/rooms/room_merchant.png') no-repeat center / cover";
         this.updatePackOptions();
     }
 
@@ -940,6 +948,7 @@ class CardGame {
         this.updatePlayerStats();
         document.getElementById('rest-text').textContent = `You recovered ${heal} HP.`;
         this.restScreen.classList.remove('hidden');
+        this.restScreen.style.background = "url('images/rooms/room_rest.png') no-repeat center / cover";
     }
     
     // Show achievement screen
