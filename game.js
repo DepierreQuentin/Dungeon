@@ -183,6 +183,7 @@ class CardGame {
         this.goldDisplay.classList.add('hidden');
         this.hpDisplay.classList.add('hidden');
         this.deckButton.classList.add('hidden');
+        this.battleLogElement.classList.add('hidden');
         this.deckScreen.classList.add('hidden');
         this.drawPileScreen.classList.add('hidden');
         this.discardPileScreen.classList.add('hidden');
@@ -241,6 +242,8 @@ class CardGame {
         this.rewardScreen.classList.add('hidden');
         this.eventScreen.classList.add('hidden');
         this.dungeonScreen.classList.remove('hidden');
+        this.battleLogElement.classList.add('hidden');
+        this.deckButton.classList.remove('hidden');
         this.dungeonScreen.style.background = "url('images/Choose_room.png') no-repeat center / cover";
 
         this.roomOptionsElement.innerHTML = '';
@@ -327,6 +330,8 @@ class CardGame {
         this.updateCardPiles();
         this.clearBattleLog();
         this.addToBattleLog(`Battle with ${this.currentEnemy.name} begins!`);
+        this.battleLogElement.classList.remove('hidden');
+        this.deckButton.classList.add('hidden');
         
         this.battleActive = true;
     }
@@ -334,6 +339,8 @@ class CardGame {
     // Start a random event
     startRandomEvent() {
         this.eventScreen.classList.remove('hidden');
+        this.battleLogElement.classList.add('hidden');
+        this.deckButton.classList.remove('hidden');
         this.pendingAmbush = false;
         const roll = Math.random();
         if (roll < 0.4) {
@@ -808,6 +815,8 @@ class CardGame {
     showRewardScreen() {
         this.gameScreen.classList.add('hidden');
         this.rewardScreen.classList.remove('hidden');
+        this.battleLogElement.classList.add('hidden');
+        this.deckButton.classList.remove('hidden');
         const goldReward = 20 + Math.floor(Math.random() * 11); // 20-30 gold
         this.addGold(goldReward);
         this.rewardTextElement.textContent = `You gained ${goldReward} gold!`;
@@ -834,6 +843,8 @@ class CardGame {
     showGameOverScreen() {
         this.gameScreen.classList.add('hidden');
         this.gameOverScreen.classList.remove('hidden');
+        this.battleLogElement.classList.add('hidden');
+        this.deckButton.classList.remove('hidden');
         
         document.getElementById('final-score').textContent = `You defeated ${this.enemiesDefeated} enemies.`;
     }
@@ -929,6 +940,8 @@ class CardGame {
     showMerchantScreen(fromDungeon = false) {
         this.inMerchantRoom = fromDungeon;
         this.merchantScreen.classList.remove('hidden');
+        this.battleLogElement.classList.add('hidden');
+        this.deckButton.classList.remove('hidden');
         this.merchantScreen.style.background = "url('images/rooms/room_merchant.png') no-repeat center / cover";
         this.updatePackOptions();
     }
@@ -1044,6 +1057,8 @@ class CardGame {
         this.updatePlayerStats();
         document.getElementById('rest-text').textContent = `You recovered ${heal} HP.`;
         this.restScreen.classList.remove('hidden');
+        this.battleLogElement.classList.add('hidden');
+        this.deckButton.classList.remove('hidden');
         this.restScreen.style.background = "url('images/rooms/room_rest.png') no-repeat center / cover";
     }
     
