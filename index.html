@@ -126,8 +126,16 @@
 
         <div id="deck-screen" class="hidden">
             <button id="close-deck" class="close-button">&times;</button>
-            <h2>Your Deck</h2>
-            <div id="deck-cards"></div>
+            <div id="deck-management">
+                <div class="deck-section">
+                    <h3>Deck (<span id="deck-count">0/20</span>)</h3>
+                    <div id="deck-cards"></div>
+                </div>
+                <div class="deck-section">
+                    <h3>Collection</h3>
+                    <div id="collection-cards"></div>
+                </div>
+            </div>
         </div>
 
         <div id="draw-pile-screen" class="hidden">
