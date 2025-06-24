@@ -79,6 +79,8 @@ class CardGame {
         this.rewardTextElement = document.getElementById('reward-text');
         this.deckButton = document.getElementById('deck-button');
         this.deckScreen = document.getElementById('deck-screen');
+        this.drawPileScreen = document.getElementById('draw-pile-screen');
+        this.discardPileScreen = document.getElementById('discard-pile-screen');
         this.achievementsButton = document.getElementById('achievements-button');
         
         // Initialize buttons
@@ -113,14 +115,26 @@ class CardGame {
         });
         document.getElementById('play-again').addEventListener('click', () => this.resetGame());
         this.deckButton.addEventListener('click', () => this.showDeckScreen());
+        this.deckPile.addEventListener('click', () => this.showDrawPileScreen());
+        this.discardPileElement.addEventListener('click', () => this.showDiscardPileScreen());
         this.achievementsButton.addEventListener('click', () => this.showAchievementScreen());
         const deckBackdrop = document.querySelector('.card-backdrop');
         document.getElementById('close-deck').addEventListener('click', () => {
             this.deckScreen.classList.add('hidden');
             deckBackdrop.classList.remove('active');
         });
+        document.getElementById('close-draw-pile').addEventListener('click', () => {
+            this.drawPileScreen.classList.add('hidden');
+            deckBackdrop.classList.remove('active');
+        });
+        document.getElementById('close-discard-pile').addEventListener('click', () => {
+            this.discardPileScreen.classList.add('hidden');
+            deckBackdrop.classList.remove('active');
+        });
         deckBackdrop.addEventListener('click', () => {
             this.deckScreen.classList.add('hidden');
+            this.drawPileScreen.classList.add('hidden');
+            this.discardPileScreen.classList.add('hidden');
             deckBackdrop.classList.remove('active');
         });
         document.getElementById('close-merchant').addEventListener('click', () => {
@@ -166,6 +180,8 @@ class CardGame {
         this.hpDisplay.classList.add('hidden');
         this.deckButton.classList.add('hidden');
         this.deckScreen.classList.add('hidden');
+        this.drawPileScreen.classList.add('hidden');
+        this.discardPileScreen.classList.add('hidden');
         document.getElementById('card-index-button').classList.remove('hidden');
     }
     
@@ -942,6 +958,32 @@ class CardGame {
         });
         const deckBackdrop = document.querySelector('.card-backdrop');
         this.deckScreen.classList.remove('hidden');
+        deckBackdrop.classList.add('active');
+    }
+
+    // Show draw pile contents
+    showDrawPileScreen() {
+        const container = document.getElementById('draw-pile-cards');
+        container.innerHTML = '';
+        this.drawPile.forEach(card => {
+            const el = card.createCardElement();
+            container.appendChild(el);
+        });
+        const deckBackdrop = document.querySelector('.card-backdrop');
+        this.drawPileScreen.classList.remove('hidden');
+        deckBackdrop.classList.add('active');
+    }
+
+    // Show discard pile contents
+    showDiscardPileScreen() {
+        const container = document.getElementById('discard-pile-cards');
+        container.innerHTML = '';
+        this.discardPile.forEach(card => {
+            const el = card.createCardElement();
+            container.appendChild(el);
+        });
+        const deckBackdrop = document.querySelector('.card-backdrop');
+        this.discardPileScreen.classList.remove('hidden');
         deckBackdrop.classList.add('active');
     }
 
