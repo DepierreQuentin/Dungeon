@@ -11,10 +11,21 @@
             <h1>Card Battler: The Sequel</h1>
             <button id="start-game">Start Game</button>
             <button id="how-to-play">How to Play</button>
+            <button id="achievements-button">Achievements</button>
         </div>
 
-        <div id="gold-display" class="hidden">Gold: 0</div>
-        <div id="hp-display" class="hidden">HP: 0/0</div>
+        <div id="gold-display" class="hidden">
+            <img id="gold-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij4KPHJlY3QgeD0iMiIgeT0iOCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjE0IiBmaWxsPSIjYjU2NTFkIiBzdHJva2U9IiM1YTJkMGMiIHN0cm9rZS13aWR0aD0iMiIvPgo8cmVjdCB4PSIyIiB5PSI0IiB3aWR0aD0iMjAiIGhlaWdodD0iOCIgc3Ryb2tlPSIjNWEyZDBjIiBmaWxsPSIjZDE3YjIyIiBzdHJva2Utd2lkdGg9IjIiLz4KPGxpbmUgeDE9IjIiIHkxPSIxMCIgeDI9IjIyIiB5Mj0iMTAiIHN0cm9rZT0iIzVhMmQwYyIgc3Ryb2tlLXdpZHRoPSIyIi8+Cjwvc3ZnPg==" alt="Chest">
+            <span id="gold-amount">0</span>
+        </div>
+        <div id="hp-display" class="hidden">
+            <img id="hp-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAyOSIgd2lkdGg9IjI0IiBoZWlnaHQ9IjIyIj4KPHBhdGggZD0iTTIzLjYgMGMtMy4xIDAtNS44IDEuOC03LjYgNC41QzE0LjIgMS44IDExLjUgMCA4LjQgMCAzLjggMCAwIDMuNiAwIDguMWMwIDkuMSAxNiAyMC45IDE2IDIwLjlTMzIgMTcuMiAzMiA4LjFDMzIgMy42IDI4LjIgMCAyMy42IDB6IiBmaWxsPSIjZTYzOTQ2Ii8+Cjwvc3ZnPg==" alt="Heart">
+            <div id="hp-bar-container">
+                <div id="hp-bar-text">0/0</div>
+                <div id="hp-bar"></div>
+            </div>
+        </div>
+        <button id="deck-button" class="hidden">Deck</button>
 
         <div id="tutorial-screen" class="hidden">
             <h2>How to Play</h2>
@@ -84,10 +95,7 @@
                 </div>
             </div>
 
-            <div id="game-buttons">
-                <button id="trading-button">Trading</button>
-                <button id="achievements-button">Achievements</button>
-            </div>
+            <div id="game-buttons"></div>
         </div>
 
         <div id="reward-screen" class="hidden">
@@ -103,14 +111,6 @@
             <button id="play-again">Play Again</button>
         </div>
 
-        <div id="trading-screen" class="hidden">
-            <h2>Card Trading</h2>
-            <div id="trading-options">
-                <div id="player-trade-cards"></div>
-                <div id="merchant-trade-cards"></div>
-            </div>
-            <button id="close-trading">Close Trading</button>
-        </div>
 
         <div id="merchant-screen" class="hidden">
             <h2>Merchant</h2>
@@ -122,6 +122,12 @@
             <h2>Pack Contents</h2>
             <div id="pack-cards"></div>
             <button id="pack-continue">Continue</button>
+        </div>
+
+        <div id="deck-screen" class="hidden">
+            <h2>Your Deck</h2>
+            <div id="deck-cards"></div>
+            <button id="close-deck">Close</button>
         </div>
 
         <div id="rest-screen" class="hidden">

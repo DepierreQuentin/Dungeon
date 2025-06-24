@@ -694,7 +694,7 @@ body {
 }
 
 /* Additional styles */
-#trading-screen, #achievement-screen, #merchant-screen, #pack-screen {
+#trading-screen, #achievement-screen, #merchant-screen, #pack-screen, #deck-screen {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -827,10 +827,18 @@ body {
     top: 20px;
     left: 20px;
     background: rgba(0,0,0,0.7);
-    padding: 10px 20px;
+    padding: 8px 12px;
     border-radius: 5px;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     color: #ffd700;
+    font-weight: bold;
+}
+
+#gold-display img {
+    width: 24px;
+    height: 24px;
 }
 
 #hp-display {
@@ -838,10 +846,62 @@ body {
     top: 60px;
     left: 20px;
     background: rgba(0,0,0,0.7);
-    padding: 10px 20px;
+    padding: 8px 12px;
     border-radius: 5px;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     color: #ff6b6b;
+    font-weight: bold;
+}
+
+#hp-display img {
+    width: 24px;
+    height: 22px;
+}
+
+#hp-bar-container {
+    position: relative;
+    width: 120px;
+    height: 20px;
+    background-color: #2d3748;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#hp-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: #ff6b6b;
+    width: 100%;
+    transition: width 0.5s;
+}
+
+#hp-bar-text {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 20px;
+}
+
+#deck-button {
+    position: fixed;
+    top: 100px;
+    left: 20px;
+    padding: 8px 16px;
+    background: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#deck-button:hover {
+    background: #2d3748;
 }
 
 #pack-options {
@@ -866,6 +926,14 @@ body {
 }
 
 #pack-cards {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+#deck-cards {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;

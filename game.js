@@ -44,7 +44,6 @@ class CardGame {
         this.eventScreen = document.getElementById('event-screen');
         this.rewardScreen = document.getElementById('reward-screen');
         this.gameOverScreen = document.getElementById('game-over-screen');
-        this.tradingScreen = document.getElementById('trading-screen');
         this.merchantScreen = document.getElementById('merchant-screen');
         this.packScreen = document.getElementById('pack-screen');
         this.restScreen = document.getElementById('rest-screen');
@@ -76,7 +75,8 @@ class CardGame {
         
         this.endTurnButton = document.getElementById('end-turn-button');
         this.rewardTextElement = document.getElementById('reward-text');
-        this.tradingButton = document.getElementById('trading-button');
+        this.deckButton = document.getElementById('deck-button');
+        this.deckScreen = document.getElementById('deck-screen');
         this.achievementsButton = document.getElementById('achievements-button');
         
         // Initialize buttons
@@ -96,14 +96,10 @@ class CardGame {
             }
         });
         document.getElementById('play-again').addEventListener('click', () => this.resetGame());
-        this.tradingButton.addEventListener('click', () => this.showTradingScreen());
+        this.deckButton.addEventListener('click', () => this.showDeckScreen());
         this.achievementsButton.addEventListener('click', () => this.showAchievementScreen());
-        document.getElementById('close-trading').addEventListener('click', () => {
-            document.getElementById('trading-screen').classList.add('hidden');
-            if (this.inMerchantRoom) {
-                this.inMerchantRoom = false;
-                this.showDungeonScreen();
-            }
+        document.getElementById('close-deck').addEventListener('click', () => {
+            this.deckScreen.classList.add('hidden');
         });
         document.getElementById('close-merchant').addEventListener('click', () => {
             this.merchantScreen.classList.add('hidden');
@@ -141,10 +137,12 @@ class CardGame {
         this.eventScreen.classList.add('hidden');
         this.rewardScreen.classList.add('hidden');
         this.gameOverScreen.classList.add('hidden');
-        this.tradingScreen.classList.add('hidden');
         this.achievementScreen.classList.add('hidden');
         this.goldDisplay.classList.add('hidden');
         this.hpDisplay.classList.add('hidden');
+        this.deckButton.classList.add('hidden');
+        this.deckScreen.classList.add('hidden');
+        document.getElementById('card-index-button').classList.remove('hidden');
     }
     
     // Show tutorial screen
@@ -165,6 +163,8 @@ class CardGame {
         this.titleScreen.classList.add('hidden');
         this.goldDisplay.classList.remove('hidden');
         this.hpDisplay.classList.remove('hidden');
+        this.deckButton.classList.remove('hidden');
+        document.getElementById('card-index-button').classList.add('hidden');
         this.updateHpDisplay();
 
         this.initializeRoomQueue();
@@ -568,13 +568,18 @@ class CardGame {
 
     updateGoldDisplay() {
         if (this.goldDisplay) {
-            this.goldDisplay.textContent = `Gold: ${this.gold}`;
+            const amt = this.goldDisplay.querySelector('#gold-amount');
+            if (amt) amt.textContent = this.gold;
         }
     }
 
     updateHpDisplay() {
         if (this.hpDisplay) {
-            this.hpDisplay.textContent = `HP: ${this.playerHp}/${this.playerMaxHp}`;
+            const txt = this.hpDisplay.querySelector('#hp-bar-text');
+            const bar = this.hpDisplay.querySelector('#hp-bar');
+            const percent = (this.playerHp / this.playerMaxHp) * 100;
+            if (txt) txt.textContent = `${this.playerHp}/${this.playerMaxHp}`;
+            if (bar) bar.style.width = `${percent}%`;
         }
     }
     
@@ -753,7 +758,7 @@ class CardGame {
     // Reset game for play again
     resetGame() {
         this.gameOverScreen.classList.add('hidden');
-        this.titleScreen.classList.remove('hidden');
+        this.showTitleScreen();
     }
     
     // Add message to battle log
@@ -875,6 +880,17 @@ class CardGame {
         });
         this.merchantScreen.classList.add('hidden');
         this.packScreen.classList.remove('hidden');
+    }
+
+    // Show deck contents
+    showDeckScreen() {
+        const container = document.getElementById('deck-cards');
+        container.innerHTML = '';
+        this.deck.forEach(card => {
+            const el = card.createCardElement();
+            container.appendChild(el);
+        });
+        this.deckScreen.classList.remove('hidden');
     }
 
     // Show rest screen and heal player
