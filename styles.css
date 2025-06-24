@@ -112,6 +112,7 @@ body {
     height: 660px;
     background: url('images/rooms/room_combat.png') no-repeat center;
     background-size: cover;
+    position: relative;
 }
 
 #battle-area {
@@ -122,8 +123,7 @@ body {
 }
 
 #enemy-section {
-    position: relative;
-    height: 40%;
+    height: 100%;
     padding: 10px;
 }
 
@@ -189,6 +189,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    z-index: 1;
 }
 
 #enemy-image {
@@ -211,10 +212,10 @@ body {
 }
 
 #player-section {
-    display: flex;
-    justify-content: space-between;
-    height: 40%;
-    padding: 10px;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
 }
 
 #player-stats {

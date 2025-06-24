@@ -72,6 +72,7 @@ class CardGame {
 
         this.goldDisplay = document.getElementById('gold-display');
         this.hpDisplay = document.getElementById('hp-display');
+        this.playerSection = document.getElementById('player-section');
 
         this.roomOptionsElement = document.getElementById('room-options');
         this.upcoming1Element = document.getElementById('upcoming-set1');
@@ -164,6 +165,9 @@ class CardGame {
         });
         document.getElementById('close-achievements').addEventListener('click', () => {
             document.getElementById('achievement-screen').classList.add('hidden');
+            if (this.battleActive) {
+                this.playerSection.classList.remove('hidden');
+            }
         });
         
         // Show title screen
@@ -182,6 +186,7 @@ class CardGame {
         this.achievementScreen.classList.add('hidden');
         this.goldDisplay.classList.add('hidden');
         this.hpDisplay.classList.add('hidden');
+        this.playerSection.classList.add('hidden');
         this.deckButton.classList.add('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckScreen.classList.add('hidden');
@@ -209,6 +214,7 @@ class CardGame {
         this.titleScreen.classList.add('hidden');
         this.goldDisplay.classList.remove('hidden');
         this.hpDisplay.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
         document.getElementById('card-index-button').classList.add('hidden');
         this.updateHpDisplay();
@@ -244,6 +250,7 @@ class CardGame {
         this.dungeonScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
         this.dungeonScreen.style.background = "url('images/Choose_room.png') no-repeat center / cover";
 
         this.roomOptionsElement.innerHTML = '';
@@ -332,7 +339,8 @@ class CardGame {
         this.addToBattleLog(`Battle with ${this.currentEnemy.name} begins!`);
         this.battleLogElement.classList.remove('hidden');
         this.deckButton.classList.add('hidden');
-        
+        this.playerSection.classList.remove('hidden');
+
         this.battleActive = true;
     }
 
@@ -341,6 +349,7 @@ class CardGame {
         this.eventScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
         this.pendingAmbush = false;
         const roll = Math.random();
         if (roll < 0.4) {
@@ -817,6 +826,7 @@ class CardGame {
         this.rewardScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
         const goldReward = 20 + Math.floor(Math.random() * 11); // 20-30 gold
         this.addGold(goldReward);
         this.rewardTextElement.textContent = `You gained ${goldReward} gold!`;
@@ -845,7 +855,8 @@ class CardGame {
         this.gameOverScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
-        
+        this.playerSection.classList.add('hidden');
+
         document.getElementById('final-score').textContent = `You defeated ${this.enemiesDefeated} enemies.`;
     }
     
@@ -942,6 +953,7 @@ class CardGame {
         this.merchantScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
         this.merchantScreen.style.background = "url('images/rooms/room_merchant.png') no-repeat center / cover";
         this.updatePackOptions();
     }
@@ -1059,6 +1071,7 @@ class CardGame {
         this.restScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
         this.restScreen.style.background = "url('images/rooms/room_rest.png') no-repeat center / cover";
     }
     
@@ -1078,10 +1091,11 @@ class CardGame {
                     <p>${achievement.description}</p>
                 </div>
             `;
-            achievementList.appendChild(achievementElement);
-        });
-        
+        achievementList.appendChild(achievementElement);
+    });
+
         achievementScreen.classList.remove('hidden');
+        this.playerSection.classList.add('hidden');
     }
     
     // Show achievement notification
