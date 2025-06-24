@@ -14,7 +14,7 @@ class Card {
     }
 
     // Create HTML element for the card
-    createCardElement() {
+    createCardElement(interactive = true) {
         const cardElement = document.createElement('div');
         cardElement.className = `card ${this.type} ${this.rarity}`;
         cardElement.dataset.cardId = this.id;
@@ -41,13 +41,15 @@ class Card {
         cardElement.appendChild(descriptionElement);
         cardElement.appendChild(typeElement);
 
-        // Add event listener for playing the card
-        cardElement.addEventListener('click', () => {
-            // Check if the card is playable (enough energy and valid target)
-            if (game.canPlayCard(this)) {
-                game.playCard(this);
-            }
-        });
+        if (interactive) {
+            // Add event listener for playing the card
+            cardElement.addEventListener('click', () => {
+                // Check if the card is playable (enough energy and valid target)
+                if (game.canPlayCard(this)) {
+                    game.playCard(this);
+                }
+            });
+        }
 
         return cardElement;
     }
@@ -317,7 +319,7 @@ function initializeCardIndex() {
         // Clear and populate card index
         cardIndexContent.innerHTML = '';
         cardCollection.forEach(card => {
-            const cardElement = card.createCardElement();
+            const cardElement = card.createCardElement(false);
             cardIndexContent.appendChild(cardElement);
         });
     });

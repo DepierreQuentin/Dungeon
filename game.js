@@ -868,7 +868,7 @@ class CardGame {
         
         playerTradeCards.innerHTML = '';
         this.deck.forEach(card => {
-            const cardElement = card.createCardElement();
+            const cardElement = card.createCardElement(false);
             cardElement.addEventListener('click', () => this.tradeCard(card));
             playerTradeCards.appendChild(cardElement);
         });
@@ -876,7 +876,7 @@ class CardGame {
         merchantTradeCards.innerHTML = '';
         const tradeOptions = getRandomTradeOptions();
         tradeOptions.forEach(card => {
-            const cardElement = card.createCardElement();
+            const cardElement = card.createCardElement(false);
             merchantTradeCards.appendChild(cardElement);
         });
     }
@@ -939,7 +939,7 @@ class CardGame {
         const packCardsDiv = document.getElementById('pack-cards');
         packCardsDiv.innerHTML = '';
         cards.forEach(card => {
-            const el = card.createCardElement();
+            const el = card.createCardElement(false);
             packCardsDiv.appendChild(el);
             this.addCardToDeck(card);
         });
@@ -953,7 +953,7 @@ class CardGame {
         const container = document.getElementById('deck-cards');
         container.innerHTML = '';
         this.deck.forEach(card => {
-            const el = card.createCardElement();
+            const el = card.createCardElement(false);
             container.appendChild(el);
         });
         const deckBackdrop = document.querySelector('.card-backdrop');
@@ -966,7 +966,7 @@ class CardGame {
         const container = document.getElementById('draw-pile-cards');
         container.innerHTML = '';
         this.drawPile.forEach(card => {
-            const el = card.createCardElement();
+            const el = card.createCardElement(false);
             container.appendChild(el);
         });
         const deckBackdrop = document.querySelector('.card-backdrop');
@@ -979,7 +979,7 @@ class CardGame {
         const container = document.getElementById('discard-pile-cards');
         container.innerHTML = '';
         this.discardPile.forEach(card => {
-            const el = card.createCardElement();
+            const el = card.createCardElement(false);
             container.appendChild(el);
         });
         const deckBackdrop = document.querySelector('.card-backdrop');
