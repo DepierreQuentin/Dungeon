@@ -654,6 +654,18 @@ body {
     padding: 10px;
 }
 
+.close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 10px;
+}
+
 #card-index-content {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -707,6 +719,10 @@ body {
     padding: 30px;
     border-radius: 20px;
     z-index: 100;
+}
+
+#deck-screen {
+    overflow-y: auto;
 }
 
 #trading-options {
@@ -940,4 +956,40 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     margin: 20px 0;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#rest-screen button, #merchant-screen button, #pack-screen button, #event-buttons button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+    padding: 15px 30px;
+    background: #4a5568;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#rest-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 560px;
+    gap: 20px;
+    text-align: center;
+}
+
+#merchant-screen button:hover, #pack-screen button:hover, #event-buttons button:hover {
+    background: #2d3748;
+}
+
+#event-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
 }
