@@ -1009,7 +1009,9 @@ body {
     margin: 20px 0;
 }
 
-#deck-cards {
+#deck-cards,
+#draw-pile-cards,
+#discard-pile-cards {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
