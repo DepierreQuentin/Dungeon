@@ -13,7 +13,10 @@ class CardGame {
         this.playerEnergy = 3;
         this.playerStatuses = {}; // Status effects like strength, dexterity, etc.
         
-        this.deck = []; // Player's full deck
+        this.deck = []; // Player's active deck
+        this.collection = []; // All owned cards
+        this.minDeckSize = 10;
+        this.maxDeckSize = 20;
         this.hand = []; // Cards in hand
         this.discardPile = []; // Discard pile
         this.drawPile = []; // Current draw pile
@@ -103,6 +106,7 @@ class CardGame {
             if (this.gold >= this.eventCardCost && this.eventCardForSale) {
                 this.addGold(-this.eventCardCost);
                 this.addCardToDeck(this.eventCardForSale);
+                this.updateDeckCount();
             }
             this.hideEventButtons();
             this.eventScreen.classList.add('hidden');
@@ -193,8 +197,9 @@ class CardGame {
     
     // Start new game
     startGame() {
-        // Initialize player deck
-        this.deck = createStarterDeck();
+        // Initialize player deck and collection
+        this.collection = createStarterDeck();
+        this.deck = [...this.collection];
         this.playerHp = this.playerMaxHp;
         this.enemiesDefeated = 0;
         this.gold = 100;
@@ -206,6 +211,7 @@ class CardGame {
         this.deckButton.classList.remove('hidden');
         document.getElementById('card-index-button').classList.add('hidden');
         this.updateHpDisplay();
+        this.updateDeckCount();
 
         this.initializeRoomQueue();
         this.showDungeonScreen();
@@ -647,6 +653,13 @@ class CardGame {
             if (bar) bar.style.width = `${percent}%`;
         }
     }
+
+    updateDeckCount() {
+        const deckCountEl = document.getElementById('deck-count');
+        if (deckCountEl) {
+            deckCountEl.textContent = `${this.deck.length}/${this.maxDeckSize}`;
+        }
+    }
     
     // Apply status effect to player
     applyPlayerStatus(status, value) {
@@ -800,10 +813,15 @@ class CardGame {
         this.rewardTextElement.textContent = `You gained ${goldReward} gold!`;
     }
     
-    // Add a card to player's deck
+    // Add a card to player's collection and deck if space allows
     addCardToDeck(card) {
-        this.deck.push(card);
-        this.addToBattleLog(`Added ${card.name} to your deck.`);
+        const addedToDeck = this.deck.length < this.maxDeckSize;
+        if (addedToDeck) {
+            this.deck.push(card);
+        }
+        this.collection.push(card);
+        const location = addedToDeck ? 'deck' : 'collection';
+        this.addToBattleLog(`Added ${card.name} to your ${location}.`);
     }
     
     // Start the next battle
@@ -879,6 +897,8 @@ class CardGame {
             const cardElement = card.createCardElement(false);
             merchantTradeCards.appendChild(cardElement);
         });
+
+        this.updateDeckCount();
     }
     
     // Trade a card from player's deck
@@ -890,8 +910,11 @@ class CardGame {
                 const merchantCard = getCardById(merchantCardId);
                 
                 // Remove player's card and add merchant's card
-                this.deck = this.deck.filter(c => c.id !== playerCard.id);
+                this.deck = this.deck.filter(c => c !== playerCard);
+                this.collection = this.collection.filter(c => c !== playerCard);
                 this.deck.push(merchantCard);
+                this.collection.push(merchantCard);
+                this.updateDeckCount();
                 
                 this.tradesCompleted++;
                 this.updateTradingOptions();
@@ -943,19 +966,46 @@ class CardGame {
             packCardsDiv.appendChild(el);
             this.addCardToDeck(card);
         });
+        this.updateDeckCount();
         const deckBackdrop = document.querySelector('.card-backdrop');
         this.packScreen.classList.remove('hidden');
         deckBackdrop.classList.add('active');
     }
 
-    // Show deck contents
+    // Show deck management screen
     showDeckScreen() {
-        const container = document.getElementById('deck-cards');
-        container.innerHTML = '';
+        const deckContainer = document.getElementById('deck-cards');
+        const collectionContainer = document.getElementById('collection-cards');
+        deckContainer.innerHTML = '';
+        collectionContainer.innerHTML = '';
+        this.updateDeckCount();
+
         this.deck.forEach(card => {
             const el = card.createCardElement(false);
-            container.appendChild(el);
+            el.addEventListener('click', () => {
+                if (this.deck.length > this.minDeckSize) {
+                    this.deck.splice(this.deck.indexOf(card), 1);
+                    this.updateDeckCount();
+                    this.showDeckScreen();
+                }
+            });
+            deckContainer.appendChild(el);
         });
+
+        this.collection.forEach(card => {
+            if (!this.deck.includes(card)) {
+                const el = card.createCardElement(false);
+                el.addEventListener('click', () => {
+                    if (this.deck.length < this.maxDeckSize) {
+                        this.deck.push(card);
+                        this.updateDeckCount();
+                        this.showDeckScreen();
+                    }
+                });
+                collectionContainer.appendChild(el);
+            }
+        });
+
         const deckBackdrop = document.querySelector('.card-backdrop');
         this.deckScreen.classList.remove('hidden');
         deckBackdrop.classList.add('active');
