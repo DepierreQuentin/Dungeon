@@ -819,6 +819,12 @@ body {
     text-align: center;
 }
 
+/* Specific background for the room selection screen */
+#dungeon-screen {
+    background: url('images/Choose_room.png') no-repeat center;
+    background-size: cover;
+}
+
 #room-options {
     display: flex;
     gap: 20px;
