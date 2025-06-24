@@ -99,8 +99,7 @@ class CardGame {
         });
         document.getElementById('event-buy').addEventListener('click', () => {
             if (this.gold >= this.eventCardCost && this.eventCardForSale) {
-                this.gold -= this.eventCardCost;
-                this.updateGoldDisplay();
+                this.addGold(-this.eventCardCost);
                 this.addCardToDeck(this.eventCardForSale);
             }
             this.hideEventButtons();
@@ -604,10 +603,16 @@ class CardGame {
         this.updatePlayerStats();
     }
 
-    // Add gold to player
+    // Add or subtract gold with animation
     addGold(amount) {
         this.gold += amount;
         this.updateGoldDisplay();
+
+        if (this.goldDisplay) {
+            const cls = amount >= 0 ? 'gold-text' : 'gold-loss-text';
+            const prefix = amount >= 0 ? '+' : '';
+            this.createFloatingText(`${prefix}${amount}`, cls, this.goldDisplay);
+        }
     }
 
     updateGoldDisplay() {
@@ -910,8 +915,7 @@ class CardGame {
     // Purchase a pack of cards
     purchasePack(pack) {
         if (this.gold < pack.price) return;
-        this.gold -= pack.price;
-        this.updateGoldDisplay();
+        this.addGold(-pack.price);
         const cards = [];
         for (let i = 0; i < pack.size; i++) {
             cards.push(getRandomCard());

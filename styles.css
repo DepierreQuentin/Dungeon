@@ -598,6 +598,23 @@ body {
     100% { transform: translateY(-30px); opacity: 0; }
 }
 
+.gold-text,
+.gold-loss-text {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    animation: gold-float 1s forwards;
+    z-index: 10;
+}
+
+.gold-text { color: #ffd700; }
+.gold-loss-text { color: #ff4444; }
+
+@keyframes gold-float {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-30px); opacity: 0; }
+}
+
 .status-icon {
     width: 24px;
     height: 24px;
