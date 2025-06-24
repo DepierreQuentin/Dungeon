@@ -1018,7 +1018,7 @@ body {
     gap: 10px;
     margin: 20px 0;
     max-height: 60vh;
-    overflow-y: auto;
+    overflow: visible;
 }
 
 #rest-screen button, #merchant-screen button, #pack-screen button, #event-buttons button {
