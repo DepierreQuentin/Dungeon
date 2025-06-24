@@ -29,6 +29,8 @@ class CardGame {
         this.achievements = [...achievements];
         this.inMerchantRoom = false;
         this.pendingAmbush = false;
+        this.eventCardForSale = null;
+        this.eventCardCost = 0;
         
         this.initializeGame();
     }
@@ -95,11 +97,32 @@ class CardGame {
                 this.showDungeonScreen();
             }
         });
+        document.getElementById('event-buy').addEventListener('click', () => {
+            if (this.gold >= this.eventCardCost && this.eventCardForSale) {
+                this.gold -= this.eventCardCost;
+                this.updateGoldDisplay();
+                this.addCardToDeck(this.eventCardForSale);
+            }
+            this.hideEventButtons();
+            this.eventScreen.classList.add('hidden');
+            this.showDungeonScreen();
+        });
+        document.getElementById('event-skip').addEventListener('click', () => {
+            this.hideEventButtons();
+            this.eventScreen.classList.add('hidden');
+            this.showDungeonScreen();
+        });
         document.getElementById('play-again').addEventListener('click', () => this.resetGame());
         this.deckButton.addEventListener('click', () => this.showDeckScreen());
         this.achievementsButton.addEventListener('click', () => this.showAchievementScreen());
+        const deckBackdrop = document.querySelector('.card-backdrop');
         document.getElementById('close-deck').addEventListener('click', () => {
             this.deckScreen.classList.add('hidden');
+            deckBackdrop.classList.remove('active');
+        });
+        deckBackdrop.addEventListener('click', () => {
+            this.deckScreen.classList.add('hidden');
+            deckBackdrop.classList.remove('active');
         });
         document.getElementById('close-merchant').addEventListener('click', () => {
             this.merchantScreen.classList.add('hidden');
@@ -109,7 +132,9 @@ class CardGame {
             }
         });
         document.getElementById('pack-continue').addEventListener('click', () => {
+            const deckBackdrop = document.querySelector('.card-backdrop');
             this.packScreen.classList.add('hidden');
+            deckBackdrop.classList.remove('active');
             if (this.inMerchantRoom) {
                 this.showMerchantScreen();
             } else {
@@ -296,20 +321,32 @@ class CardGame {
             this.dealDamageToPlayer(damage);
             this.eventTextElement.textContent = `A trap deals ${damage} damage!`;
         } else if (roll < 0.9) {
-            const cost = 20;
-            const card = getRandomCard();
-            if (this.gold >= cost) {
-                this.gold -= cost;
-                this.updateGoldDisplay();
-                this.addCardToDeck(card);
-                this.eventTextElement.textContent = `You pay ${cost} gold and receive ${card.name}!`;
+            this.eventCardCost = 20;
+            this.eventCardForSale = getRandomCard();
+            if (this.gold >= this.eventCardCost) {
+                this.eventTextElement.textContent = `A dealer offers ${this.eventCardForSale.name} for ${this.eventCardCost} gold.`;
+                this.showEventButtons();
             } else {
-                this.eventTextElement.textContent = `A dealer offers ${card.name} for ${cost} gold, but you can't afford it.`;
+                this.eventTextElement.textContent = `A dealer offers ${this.eventCardForSale.name} for ${this.eventCardCost} gold, but you can't afford it.`;
             }
         } else {
             this.pendingAmbush = true;
             this.eventTextElement.textContent = 'You are ambushed by an enemy!';
         }
+    }
+
+    showEventButtons() {
+        document.getElementById('event-continue').classList.add('hidden');
+        document.getElementById('event-buy').classList.remove('hidden');
+        document.getElementById('event-skip').classList.remove('hidden');
+    }
+
+    hideEventButtons() {
+        document.getElementById('event-continue').classList.remove('hidden');
+        document.getElementById('event-buy').classList.add('hidden');
+        document.getElementById('event-skip').classList.add('hidden');
+        this.eventCardForSale = null;
+        this.eventCardCost = 0;
     }
     
     // Update enemy health display
@@ -878,8 +915,9 @@ class CardGame {
             packCardsDiv.appendChild(el);
             this.addCardToDeck(card);
         });
-        this.merchantScreen.classList.add('hidden');
+        const deckBackdrop = document.querySelector('.card-backdrop');
         this.packScreen.classList.remove('hidden');
+        deckBackdrop.classList.add('active');
     }
 
     // Show deck contents
@@ -890,7 +928,9 @@ class CardGame {
             const el = card.createCardElement();
             container.appendChild(el);
         });
+        const deckBackdrop = document.querySelector('.card-backdrop');
         this.deckScreen.classList.remove('hidden');
+        deckBackdrop.classList.add('active');
     }
 
     // Show rest screen and heal player
