@@ -154,7 +154,8 @@ class CardGame {
             this.packScreen.classList.add('hidden');
             deckBackdrop.classList.remove('active');
             if (this.inMerchantRoom) {
-                this.showMerchantScreen();
+                // Preserve merchant context so the player can exit correctly
+                this.showMerchantScreen(true);
             } else {
                 this.showDungeonScreen();
             }
