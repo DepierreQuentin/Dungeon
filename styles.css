@@ -919,6 +919,7 @@ body {
     font-size: 1.2rem;
     text-shadow: 0 0 5px #000;
     outline: 2px solid transparent;
+    border-radius: 89px 87px 0px 0px;
 }
 
 .door:focus-visible {
@@ -929,9 +930,9 @@ body {
     background-color : rgba(0, 0, 0, .5);
 }
 
-#leftDoor {top: 6%; left: 1%; width: 18%; height: 56%;}
-#midDoor {top: -1%; left: 37%; width: 23%; height: 65%;}
-#rightDoor {top: 6%; left: 80%; width: 18%; height: 56%;}
+#leftDoor {top: 6%; left: 1%; width: 18%; height: 57%;}
+#midDoor {top: 0%; left: 37%; width: 23%; height: 63%;}
+#rightDoor {top: 6%; left: 80%; width: 18%; height: 57%;}
 
 #upcoming-rooms {
     position: absolute;
