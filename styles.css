@@ -925,9 +925,13 @@ body {
     outline-color: #ffc400;
 }
 
-#leftDoor {top: 60%; left: 18%; width: 10%; height: 25%;}
-#midDoor {top: 55%; left: 45%; width: 10%; height: 30%;}
-#rightDoor {top: 60%; left: 72%; width: 10%; height: 25%;}
+.door:hover {
+    background-color : rgba(0, 0, 0, .5);
+}
+
+#leftDoor {top: 6%; left: 1%; width: 18%; height: 56%;}
+#midDoor {top: -1%; left: 37%; width: 23%; height: 65%;}
+#rightDoor {top: 6%; left: 80%; width: 18%; height: 56%;}
 
 #upcoming-rooms {
     position: absolute;
