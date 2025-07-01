@@ -1025,13 +1025,46 @@ class CardGame {
         for (let i = 0; i < pack.size; i++) {
             cards.push(getRandomCard());
         }
+
         const packCardsDiv = document.getElementById('pack-cards');
         packCardsDiv.innerHTML = '';
+
         cards.forEach(card => {
-            const el = card.createCardElement(false);
-            packCardsDiv.appendChild(el);
+            const isNew = !this.collection.some(c => c.id === card.id);
             this.addCardToDeck(card);
+
+            const flipCard = document.createElement('div');
+            flipCard.className = 'flip-card';
+
+            const inner = document.createElement('div');
+            inner.className = 'flip-card-inner';
+
+            const back = document.createElement('div');
+            back.className = 'flip-card-back';
+
+            const frontWrapper = document.createElement('div');
+            frontWrapper.className = 'flip-card-front';
+            const frontCard = card.createCardElement(false);
+            frontCard.style.pointerEvents = 'none';
+            frontWrapper.appendChild(frontCard);
+
+            inner.appendChild(back);
+            inner.appendChild(frontWrapper);
+            flipCard.appendChild(inner);
+
+            const label = document.createElement('div');
+            label.className = 'card-new-label';
+            flipCard.appendChild(label);
+
+            flipCard.addEventListener('click', () => {
+                if (flipCard.classList.contains('flipped')) return;
+                flipCard.classList.add('flipped');
+                label.textContent = isNew ? 'New Card!' : 'Duplicate';
+            });
+
+            packCardsDiv.appendChild(flipCard);
         });
+
         this.updateDeckCount();
         const deckBackdrop = document.querySelector('.card-backdrop');
         this.packScreen.classList.remove('hidden');
