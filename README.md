@@ -13,7 +13,7 @@ Au lancement, l'écran titre propose de commencer une partie, de consulter le tu
 - **Marchand** : permet d'acheter des packs de cartes (petit, moyen ou grand). Les cartes obtenues sont ajoutées à la collection et peuvent rejoindre le deck actif.
 - **Repos** : soigne environ 30 % des points de vie manquants.
 
-Après chaque combat, un écran de récompense apparaît : le joueur choisit une nouvelle carte parmi trois tirées aléatoirement et reçoit éventuellement de l'or supplémentaire. La progression continue jusqu'à épuisement des points de vie du joueur, moment où l'écran "Game Over" affiche le nombre d'ennemis vaincus.
+Après chaque combat, un écran de récompense apparaît : le joueur reçoit de l'or. La progression continue jusqu'à épuisement des points de vie du joueur, moment où l'écran "Game Over" affiche le nombre d'ennemis vaincus.
 
 ## Gestion du deck
 
