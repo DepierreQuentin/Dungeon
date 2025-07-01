@@ -253,14 +253,14 @@ class CardGame {
         this.playerSection.classList.add('hidden');
         this.dungeonScreen.style.background = "url('images/Choose_room.png') no-repeat center / cover";
 
-        this.roomOptionsElement.innerHTML = '';
+        const doorIds = ['leftDoor', 'midDoor', 'rightDoor'];
         for (let i = 0; i < 3; i++) {
             const type = this.roomQueue[i];
-            const btn = document.createElement('button');
-            btn.className = 'room-button';
-            btn.textContent = type.charAt(0).toUpperCase() + type.slice(1);
-            btn.addEventListener('click', () => this.enterRoom(i));
-            this.roomOptionsElement.appendChild(btn);
+            const door = document.getElementById(doorIds[i]);
+            if (door) {
+                door.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                door.onclick = () => this.enterRoom(i);
+            }
         }
 
         const set1 = this.roomQueue.slice(3, 6).map(r => r.charAt(0).toUpperCase() + r.slice(1)).join(', ');

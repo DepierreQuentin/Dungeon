@@ -897,30 +897,43 @@ body {
 #dungeon-screen {
     background: url('images/Choose_room.png') no-repeat center;
     background-size: cover;
+    position: relative;
     justify-content: flex-start;
     padding-top: 20px;
 }
 
 #room-options {
-    display: flex;
-    gap: 20px;
+    position: relative;
     width: 100%;
-    justify-content: space-around;
+    max-width: 900px;
+    aspect-ratio: 16/9;
     margin-top: 20px;
 }
 
-.room-button {
-    padding: 15px 30px;
-    background: #4a5568;
-    color: white;
+.door {
+    position: absolute;
+    background: transparent;
     border: none;
-    border-radius: 5px;
+    color: #fff;
     cursor: pointer;
-    transition: background 0.3s;
+    font-size: 1.2rem;
+    text-shadow: 0 0 5px #000;
+    outline: 2px solid transparent;
 }
 
-.room-button:hover {
-    background: #2d3748;
+.door:focus-visible {
+    outline-color: #ffc400;
+}
+
+#leftDoor {top: 60%; left: 18%; width: 10%; height: 25%;}
+#midDoor {top: 55%; left: 45%; width: 10%; height: 30%;}
+#rightDoor {top: 60%; left: 72%; width: 10%; height: 25%;}
+
+#upcoming-rooms {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    text-align: center;
 }
 
 #gold-display {
