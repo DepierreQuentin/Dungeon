@@ -1082,7 +1082,6 @@ body {
 
 .flip-card-front {
     transform: rotateY(180deg);
-    pointer-events: none;
 }
 
 .flip-card-back {
@@ -1095,6 +1094,15 @@ body {
     color: #ffd700;
     font-weight: bold;
     min-height: 1em;
+}
+
+@keyframes card-glow {
+    0% { box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.8); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+.card-glow {
+    animation: card-glow 0.8s ease-out forwards;
 }
 
 #deck-cards,

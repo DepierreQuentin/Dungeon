@@ -1045,7 +1045,6 @@ class CardGame {
             const frontWrapper = document.createElement('div');
             frontWrapper.className = 'flip-card-front';
             const frontCard = card.createCardElement(false);
-            frontCard.style.pointerEvents = 'none';
             frontWrapper.appendChild(frontCard);
 
             inner.appendChild(back);
@@ -1059,7 +1058,10 @@ class CardGame {
             flipCard.addEventListener('click', () => {
                 if (flipCard.classList.contains('flipped')) return;
                 flipCard.classList.add('flipped');
-                label.textContent = isNew ? 'New Card!' : 'Duplicate';
+                label.textContent = isNew ? 'New Card!' : '';
+                if (isNew) {
+                    frontCard.classList.add('card-glow');
+                }
             });
 
             packCardsDiv.appendChild(flipCard);
