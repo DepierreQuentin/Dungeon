@@ -34,6 +34,10 @@ class CardGame {
         this.pendingAmbush = false;
         this.eventCardForSale = null;
         this.eventCardCost = 0;
+
+        // Pending rewards or damage to apply when the player continues
+        this.pendingGold = 0;
+        this.pendingHp = 0;
         
         this.initializeGame();
     }
@@ -94,6 +98,17 @@ class CardGame {
         this.endTurnButton.addEventListener('click', () => this.endPlayerTurn());
         document.getElementById('reward-continue').addEventListener('click', () => this.startNextRoom());
         document.getElementById('event-continue').addEventListener('click', () => {
+            if (this.pendingGold !== 0) {
+                this.addGold(this.pendingGold);
+                this.pendingGold = 0;
+            }
+            if (this.pendingHp !== 0) {
+                const change = this.pendingHp;
+                this.pendingHp = 0;
+                this.playerHp = Math.max(0, Math.min(this.playerHp + change, this.playerMaxHp));
+                this.updatePlayerStats();
+            }
+
             this.eventScreen.classList.add('hidden');
             if (this.pendingAmbush) {
                 this.pendingAmbush = false;
@@ -161,6 +176,12 @@ class CardGame {
             }
         });
         document.getElementById('rest-continue').addEventListener('click', () => {
+            if (this.pendingHp !== 0) {
+                const change = this.pendingHp;
+                this.pendingHp = 0;
+                this.playerHp = Math.max(0, Math.min(this.playerHp + change, this.playerMaxHp));
+                this.updatePlayerStats();
+            }
             this.restScreen.classList.add('hidden');
             this.showDungeonScreen();
         });
@@ -210,6 +231,8 @@ class CardGame {
         this.playerHp = this.playerMaxHp;
         this.enemiesDefeated = 0;
         this.gold = 100;
+        this.pendingGold = 0;
+        this.pendingHp = 0;
         this.updateGoldDisplay();
         
         this.titleScreen.classList.add('hidden');
@@ -352,15 +375,17 @@ class CardGame {
         this.deckButton.classList.remove('hidden');
         this.playerSection.classList.add('hidden');
         this.pendingAmbush = false;
+        this.pendingGold = 0;
+        this.pendingHp = 0;
         const roll = Math.random();
         if (roll < 0.4) {
             const gold = 10 + Math.floor(Math.random() * 11);
-            this.addGold(gold);
+            this.pendingGold = gold;
             this.eventTextElement.textContent = `You found a treasure chest with ${gold} gold!`;
             this.eventScreen.style.background = "url('images/rooms/room_event_chest.png') no-repeat center / cover";
         } else if (roll < 0.7) {
             const damage = 5 + Math.floor(Math.random() * 6);
-            this.dealDamageToPlayer(damage);
+            this.pendingHp = -damage;
             this.eventTextElement.textContent = `A trap deals ${damage} damage!`;
             this.eventScreen.style.background = "url('images/rooms/room_event_trap.png') no-repeat center / cover";
         } else if (roll < 0.9) {
@@ -829,7 +854,8 @@ class CardGame {
         this.deckButton.classList.remove('hidden');
         this.playerSection.classList.add('hidden');
         const goldReward = 20 + Math.floor(Math.random() * 11); // 20-30 gold
-        this.addGold(goldReward);
+        this.pendingGold = goldReward;
+        this.pendingHp = 0;
         this.rewardTextElement.textContent = `You gained ${goldReward} gold!`;
     }
     
@@ -846,6 +872,20 @@ class CardGame {
     
     // Start the next battle
     startNextRoom() {
+        if (this.pendingGold !== 0) {
+            this.addGold(this.pendingGold);
+            this.pendingGold = 0;
+        }
+        if (this.pendingHp !== 0) {
+            const change = this.pendingHp;
+            this.pendingHp = 0;
+            if (change > 0) {
+                this.playerHp = Math.min(this.playerHp + change, this.playerMaxHp);
+            } else {
+                this.playerHp = Math.max(0, this.playerHp + change);
+            }
+            this.updatePlayerStats();
+        }
         this.rewardScreen.classList.add('hidden');
         this.showDungeonScreen();
     }
@@ -1066,8 +1106,7 @@ class CardGame {
     // Show rest screen and heal player
     showRestScreen() {
         const heal = Math.ceil(this.playerHp * 0.3);
-        this.playerHp = Math.min(this.playerHp + heal, this.playerMaxHp);
-        this.updatePlayerStats();
+        this.pendingHp = heal;
         document.getElementById('rest-text').textContent = `You recovered ${heal} HP.`;
         this.restScreen.classList.remove('hidden');
         this.battleLogElement.classList.add('hidden');
