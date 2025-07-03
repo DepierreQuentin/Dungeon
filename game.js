@@ -794,7 +794,10 @@ class CardGame {
             gainGold: new Audio('audio/Gold_RR1_v3.ogg'),
             spendGold: new Audio('audio/CashRegister.ogg'),
             chest: new Audio('audio/ChestOpen_v2.ogg'),
-            cardDeal: new Audio('audio/STS_SFX_CardDeal8_v1.ogg')
+            cardDeal: new Audio('audio/STS_SFX_CardDeal8_v1.ogg'),
+            uiHover: new Audio('audio/UIHover_v2.wav'),
+            viewDeck: new Audio('audio/ViewDeck_v1.ogg'),
+            newUnlock: new Audio('audio/NewUnlock_v1.ogg')
         };
     }
 
@@ -1151,6 +1154,7 @@ class CardGame {
                 label.textContent = isNew ? 'New Card!' : '';
                 if (isNew) {
                     frontCard.classList.add('card-glow');
+                    setTimeout(() => this.playSound('newUnlock'), 500);
                 }
             });
 
@@ -1165,6 +1169,7 @@ class CardGame {
 
     // Show deck management screen
     showDeckScreen() {
+        this.playSound('viewDeck');
         const deckContainer = document.getElementById('deck-cards');
         const collectionContainer = document.getElementById('collection-cards');
         deckContainer.innerHTML = '';
