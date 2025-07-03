@@ -219,7 +219,8 @@ function getCardById(id) {
         cardTemplate.cost,
         cardTemplate.description,
         cardTemplate.effect,
-        cardTemplate.rarity
+        cardTemplate.rarity,
+        cardTemplate.block
     );
     return newCard;
 }
@@ -235,7 +236,8 @@ function getRandomCard() {
         cardTemplate.cost,
         cardTemplate.description,
         cardTemplate.effect,
-        cardTemplate.rarity
+        cardTemplate.rarity,
+        cardTemplate.block
     );
 }
 
@@ -278,7 +280,8 @@ function getRandomCardByRarity(rarity) {
         cardTemplate.cost,
         cardTemplate.description,
         cardTemplate.effect,
-        cardTemplate.rarity
+        cardTemplate.rarity,
+        cardTemplate.block
     );
 }
 
