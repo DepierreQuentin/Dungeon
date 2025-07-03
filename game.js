@@ -591,6 +591,18 @@ class CardGame {
         // Remove from hand
         const playedCard = this.hand.splice(cardIndex, 1)[0];
 
+        // Find the card element in the hand for animation
+        const cardElements = this.handContainer.querySelectorAll('.card');
+        const cardElement = Array.from(cardElements).find(elem => elem.dataset.cardId == playedCard.id);
+
+        // Animate the card moving toward the gold display (to the left)
+        if (cardElement && this.goldDisplay) {
+            const goldRect = this.goldDisplay.getBoundingClientRect();
+            const targetX = goldRect.left + goldRect.width / 2;
+            const targetY = goldRect.top + goldRect.height / 2;
+            animateCardPlayed(cardElement, targetX, targetY);
+        }
+
         // Pay energy cost
         this.playerEnergy -= playedCard.cost;
 
