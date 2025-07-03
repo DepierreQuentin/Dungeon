@@ -572,6 +572,36 @@ class CardGame {
         this.cardsPlayedThisTurn++;
         this.checkAchievements();
     }
+
+    // Convert a defensive card to gold instead of gaining block
+    convertBlockCardToGold(card) {
+        if (!this.canPlayCard(card) || card.block <= 0) return;
+
+        // Find the card in hand
+        const cardIndex = this.hand.findIndex(c => c.id === card.id);
+        if (cardIndex === -1) return;
+
+        // Remove from hand
+        const playedCard = this.hand.splice(cardIndex, 1)[0];
+
+        // Pay energy cost
+        this.playerEnergy -= playedCard.cost;
+
+        // Add gold instead of block
+        this.addGold(playedCard.block);
+        this.addToBattleLog(`Converted ${playedCard.name} into ${playedCard.block} gold.`);
+
+        // Discard the card
+        this.discardPile.push(playedCard);
+
+        // Update UI
+        this.updateHandDisplay();
+        this.updatePlayerStats();
+        this.updateCardPiles();
+
+        this.cardsPlayedThisTurn++;
+        this.checkAchievements();
+    }
     
     // Deal damage to the enemy
     dealDamageToEnemy(amount) {
@@ -893,10 +923,9 @@ class CardGame {
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
         this.playerSection.classList.add('hidden');
-        const goldReward = 20 + Math.floor(Math.random() * 11); // 20-30 gold
-        this.pendingGold = goldReward;
+        this.pendingGold = 0;
         this.pendingHp = 0;
-        this.rewardTextElement.textContent = `You gained ${goldReward} gold!`;
+        this.rewardTextElement.textContent = 'No gold reward.';
     }
     
     // Add a card to player's collection and deck if space allows

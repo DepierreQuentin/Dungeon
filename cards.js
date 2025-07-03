@@ -3,14 +3,15 @@ import { gsap } from 'gsap';
 
 // Card class to create new cards
 class Card {
-    constructor(id, name, type, cost, description, effect, rarity = 'common') {
+    constructor(id, name, type, cost, description, effect, rarity = 'common', block = 0) {
         this.id = id;
         this.name = name;
-        this.type = type; 
+        this.type = type;
         this.cost = cost;
         this.description = description;
-        this.effect = effect; 
-        this.rarity = rarity; 
+        this.effect = effect;
+        this.rarity = rarity;
+        this.block = block; // Amount of block the card would normally grant
     }
 
     // Create HTML element for the card
@@ -42,11 +43,18 @@ class Card {
         cardElement.appendChild(typeElement);
 
         if (interactive) {
-            // Add event listener for playing the card
+            // Left click: play the card normally
             cardElement.addEventListener('click', () => {
-                // Check if the card is playable (enough energy and valid target)
                 if (game.canPlayCard(this)) {
                     game.playCard(this);
+                }
+            });
+
+            // Right click: convert block to gold if applicable
+            cardElement.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                if (this.block > 0 && game.canPlayCard(this)) {
+                    game.convertBlockCardToGold(this);
                 }
             });
         }
@@ -85,28 +93,28 @@ const cardCollection = [
     // Common defensive cards
     new Card(6, "Defend", "skill", 1, "Gain 5 Block.", (game) => {
         game.gainBlock(5);
-    }, 'common'),
+    }, 'common', 5),
     
     new Card(7, "Dodge", "skill", 1, "Gain 8 Block.", (game) => {
         game.gainBlock(8);
-    }, 'common'),
+    }, 'common', 8),
     
     // Uncommon defensive cards
     new Card(8, "Second Wind", "skill", 1, "Gain 6 Block. Draw 1 card.", (game) => {
         game.gainBlock(6);
         game.drawCards(1);
-    }, 'uncommon'),
+    }, 'uncommon', 6),
     
     new Card(9, "Backflip", "skill", 2, "Gain 10 Block. Draw 2 cards.", (game) => {
         game.gainBlock(10);
         game.drawCards(2);
-    }, 'uncommon'),
+    }, 'uncommon', 10),
     
     // Rare defensive card
     new Card(10, "Barricade", "skill", 3, "Gain 15 Block. Block doesn't expire this turn.", (game) => {
         game.gainBlock(15);
         game.applyPlayerStatus('barricade', 1);
-    }, 'rare'),
+    }, 'rare', 15),
     
     // Rare power cards
     new Card(11, "Inflame", "power", 1, "Gain 2 Strength permanently.", (game) => {
@@ -139,7 +147,7 @@ const cardCollection = [
     new Card(17, "Ice Shield", "skill", 2, "Gain 12 Block. Next turn gain 6 Block.", (game) => {
         game.gainBlock(12);
         game.applyPlayerStatus('next_turn_block', 6);
-    }, 'rare'),
+    }, 'rare', 12),
     
     new Card(18, "Thunder Strike", "attack", 3, "Deal 10 damage 3 times.", (game) => {
         for (let i = 0; i < 3; i++) {
