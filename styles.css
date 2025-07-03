@@ -322,7 +322,7 @@ body {
     border-radius: 8px;
 }
 
-.card-name{
+/*.card-name{
     display: none;
 }
 .card-cost{
@@ -333,7 +333,7 @@ body {
 }
 .card-type{
     display: none;
-}
+}*/
 
 .card[data-card-name="Strike"]::before {
     background-image: url('images/card_strike.png');
@@ -446,6 +446,9 @@ body {
 }*/
 
 .card-name {
+    position: absolute;
+    top: 114px;
+    left: 42px;
     font-size: 1.2rem;
     font-weight: bold;
     color: white;
@@ -455,7 +458,9 @@ body {
 }
 
 .card-description {
-    margin-top: 130px;
+    position: absolute;
+    top: 130px;
+    left: 20px;
     font-size: 0.9rem;
     text-align: center;
     color: #eee;
@@ -464,20 +469,23 @@ body {
 
 .card-cost {
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 9px;
+    left: 8px;
     width: 25px;
     height: 25px;
-    background-color: #68d391;
+    background-color: #46691D;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    color: #2d3748;
+    color: white;
 }
 
 .card-type {
+    position: absolute;
+    top: 174px;
+    left: 52px;
     font-size: 0.7rem;
     text-align: center;
     color: #a0aec0;
