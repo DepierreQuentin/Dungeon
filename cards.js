@@ -59,6 +59,13 @@ class Card {
             });
         }
 
+        // Play hover sound when the mouse enters the card
+        cardElement.addEventListener('mouseenter', () => {
+            if (window.game && typeof game.playSound === 'function') {
+                game.playSound('uiHover');
+            }
+        });
+
         return cardElement;
     }
 }
