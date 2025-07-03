@@ -45,6 +45,14 @@ class CardGame {
         this.loadSounds();
 
         this.initializeGame();
+        this.questPool = this.initializeQuestPool();
+        this.activeQuests = [];
+        this.damageThisTurn = 0;
+        this.blockThisTurn = 0;
+        this.turnCounter = 0;
+        this.attackCardsThisBattle = 0;
+        this.defenseCardPlayed = false;
+        this.damageTakenThisBattle = 0;
     }
     
     // Initialize game elements and event listeners
@@ -78,6 +86,8 @@ class CardGame {
         this.deckPile = document.getElementById('deck-pile');
         this.discardPileElement = document.getElementById('discard-pile');
         this.battleLogElement = document.getElementById('battle-log');
+        this.questContainer = document.getElementById('quest-container');
+        this.enemyTurnIndicator = document.getElementById('enemy-turn-indicator');
 
         this.goldDisplay = document.getElementById('gold-display');
         this.hpDisplay = document.getElementById('hp-display');
@@ -216,6 +226,8 @@ class CardGame {
         this.playerSection.classList.add('hidden');
         this.deckButton.classList.add('hidden');
         this.battleLogElement.classList.add('hidden');
+        this.questContainer.classList.add('hidden');
+        this.enemyTurnIndicator.classList.add('hidden');
         this.deckScreen.classList.add('hidden');
         this.drawPileScreen.classList.add('hidden');
         this.discardPileScreen.classList.add('hidden');
@@ -244,11 +256,15 @@ class CardGame {
         this.titleScreen.classList.add('hidden');
         this.goldDisplay.classList.remove('hidden');
         this.hpDisplay.classList.remove('hidden');
+        this.questContainer.classList.remove('hidden');
+        this.enemyTurnIndicator.classList.add('hidden');
         this.playerSection.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
         document.getElementById('card-index-button').classList.add('hidden');
         this.updateHpDisplay();
         this.updateDeckCount();
+
+        this.renderQuests();
 
         this.initializeRoomQueue();
         this.showDungeonScreen();
@@ -281,6 +297,7 @@ class CardGame {
         this.battleLogElement.classList.add('hidden');
         this.deckButton.classList.remove('hidden');
         this.playerSection.classList.add('hidden');
+        this.enemyTurnIndicator.classList.add('hidden');
         this.dungeonScreen.style.background = "url('images/Choose_room.png') no-repeat center / cover";
 
         const doorIds = ['leftDoor', 'midDoor', 'rightDoor'];
@@ -361,7 +378,7 @@ class CardGame {
         // Choose enemy's first move
         this.currentEnemy.chooseNextMove();
         this.updateEnemyIntent();
-        
+
         // Draw initial hand
         this.drawCards(5);
         
@@ -375,6 +392,7 @@ class CardGame {
         this.playerSection.classList.remove('hidden');
 
         this.battleActive = true;
+        this.checkQuestProgress('battle_start');
     }
 
     // Start a random event
@@ -408,6 +426,8 @@ class CardGame {
                 this.eventTextElement.textContent = `A dealer offers ${this.eventCardForSale.name} for ${this.eventCardCost} gold, but you can't afford it.`;
             }
             this.eventScreen.style.background = "url('images/rooms/room_event_card.png') no-repeat center / cover";
+        } else if (roll < 0.95) {
+            this.startQuestOffer();
         } else {
             this.pendingAmbush = true;
             this.eventTextElement.textContent = 'You are ambushed by an enemy!';
@@ -425,8 +445,46 @@ class CardGame {
         document.getElementById('event-continue').classList.remove('hidden');
         document.getElementById('event-buy').classList.add('hidden');
         document.getElementById('event-skip').classList.add('hidden');
+        document.getElementById('event-quest1').classList.add('hidden');
+        document.getElementById('event-quest2').classList.add('hidden');
+        document.getElementById('event-quest3').classList.add('hidden');
+        document.getElementById('event-quest-skip').classList.add('hidden');
+        document.getElementById('event-cancel1').classList.add('hidden');
+        document.getElementById('event-cancel2').classList.add('hidden');
         this.eventCardForSale = null;
         this.eventCardCost = 0;
+    }
+
+    startQuestOffer() {
+        this.eventTextElement.textContent = 'A traveler offers you a quest:';
+        const buttons = [
+            document.getElementById('event-quest1'),
+            document.getElementById('event-quest2'),
+            document.getElementById('event-quest3')
+        ];
+        const skipBtn = document.getElementById('event-quest-skip');
+        const quests = this.getRandomQuests(3);
+        buttons.forEach((btn, i) => {
+            const q = quests[i];
+            if (q) {
+                btn.textContent = q.description;
+                btn.onclick = () => { this.acceptQuest(q); this.hideEventButtons(); this.eventScreen.classList.add('hidden'); this.showDungeonScreen(); };
+                btn.classList.remove('hidden');
+            }
+        });
+        skipBtn.onclick = () => { this.hideEventButtons(); this.eventScreen.classList.add('hidden'); this.showDungeonScreen(); };
+        skipBtn.classList.remove('hidden');
+        const cancelButtons = [document.getElementById('event-cancel1'), document.getElementById('event-cancel2')];
+        this.activeQuests.forEach((aq, idx) => {
+            if (cancelButtons[idx]) {
+                cancelButtons[idx].textContent = `Abandon ${aq.description}`;
+                cancelButtons[idx].onclick = () => { this.cancelQuest(aq); this.hideEventButtons(); this.eventScreen.classList.add('hidden'); this.showDungeonScreen(); };
+                cancelButtons[idx].classList.remove('hidden');
+            }
+        });
+        document.getElementById('event-continue').classList.add('hidden');
+        document.getElementById('event-buy').classList.add('hidden');
+        document.getElementById('event-skip').classList.add('hidden');
     }
     
     // Update enemy health display
@@ -560,6 +618,8 @@ class CardGame {
         
         // Execute card effect
         playedCard.effect(this);
+
+        this.checkQuestProgress('card_played', {card: playedCard});
         
         // Add card to discard pile
         this.discardPile.push(playedCard);
@@ -610,6 +670,8 @@ class CardGame {
         this.addGold(playedCard.block);
         this.addToBattleLog(`Converted ${playedCard.name} into ${playedCard.block} gold.`);
 
+        this.checkQuestProgress('card_played', {card: playedCard});
+
         // Discard the card
         this.discardPile.push(playedCard);
 
@@ -644,17 +706,20 @@ class CardGame {
         
         // Update enemy health display
         this.updateEnemyHealth();
-        
+
         // Animate enemy taking damage
         const enemyElement = document.getElementById('enemy-display');
         enemyElement.classList.add('shake');
         setTimeout(() => {
             enemyElement.classList.remove('shake');
         }, 500);
+
+        this.checkQuestProgress('damage_dealt', {amount: result.damage});
     }
     
     // Deal damage to the player
     dealDamageToPlayer(amount) {
+        this.playSound('heavyAttack');
         if (this.currentEnemy) {
             // Apply enemy strength if they have it
             if (this.currentEnemy.statuses.strength > 0) {
@@ -708,7 +773,9 @@ class CardGame {
         } else {
             this.addToBattleLog(`Enemy dealt ${amount} damage to you.`);
         }
-        
+
+        this.checkQuestProgress('damage_taken', {amount: damageToHp});
+
         // Update player stats display
         this.updatePlayerStats();
     }
@@ -719,6 +786,7 @@ class CardGame {
         this.createFloatingText(amount, 'block-text', document.getElementById('player-stats'));
         this.addToBattleLog(`You gained ${amount} Block.`);
         this.playSound('block');
+        this.checkQuestProgress('block_gained', {amount});
         this.updatePlayerStats();
     }
     
@@ -744,6 +812,7 @@ class CardGame {
             const prefix = amount >= 0 ? '+' : '';
             this.createFloatingText(`${prefix}${amount}`, cls, this.goldDisplay);
         }
+        this.checkQuestProgress('gold_change', {amount});
     }
 
     updateGoldDisplay() {
@@ -828,7 +897,7 @@ class CardGame {
     // End player turn
     endPlayerTurn() {
         if (!this.battleActive) return;
-        
+
         // Apply end of turn effects
         this.applyEndOfTurnEffects();
         
@@ -838,6 +907,7 @@ class CardGame {
         }
         
         // Enemy turn
+        this.checkQuestProgress('end_turn');
         this.executeEnemyTurn();
         
         // Check if battle ends after enemy turn
@@ -865,9 +935,17 @@ class CardGame {
     // Execute enemy turn
     executeEnemyTurn() {
         if (!this.currentEnemy || this.currentEnemy.isDead()) return;
-        
+
+        // Visual and sound cue for enemy turn
+        this.enemyTurnIndicator.classList.add('enemy-turn-show');
+        this.playSound('uiHover');
+        setTimeout(() => {
+            this.enemyTurnIndicator.classList.remove('enemy-turn-show');
+        }, 1000);
+
         // Execute enemy move
         const moveName = this.currentEnemy.executeMove(this);
+        this.playSound('heavyAttack');
         this.addToBattleLog(`Enemy used ${moveName}.`);
         
         // Decrease enemy status effects
@@ -894,8 +972,9 @@ class CardGame {
         this.updateCardPiles();
         
         this.addToBattleLog("Your turn begins.");
-        
+
         this.cardsPlayedThisTurn = 0;
+        this.checkQuestProgress('start_turn');
     }
     
     // Apply start of turn effects
@@ -913,6 +992,7 @@ class CardGame {
             this.battleActive = false;
             this.enemiesDefeated++;
             this.addToBattleLog(`You defeated the ${this.currentEnemy.name}!`);
+            this.checkQuestProgress('battle_end', {win: true});
             
             // Show reward screen
             setTimeout(() => {
@@ -926,6 +1006,7 @@ class CardGame {
         if (this.playerHp <= 0) {
             this.battleActive = false;
             this.addToBattleLog("You were defeated!");
+            this.checkQuestProgress('battle_end', {win: false});
             
             // Show game over screen
             setTimeout(() => {
@@ -1243,6 +1324,7 @@ class CardGame {
         this.deckButton.classList.remove('hidden');
         this.playerSection.classList.add('hidden');
         this.restScreen.style.background = "url('images/rooms/room_rest.png') no-repeat center / cover";
+        this.checkQuestProgress('rest');
     }
     
     // Show achievement screen
@@ -1283,6 +1365,113 @@ class CardGame {
     // Check achievements
     checkAchievements() {
         this.achievements.forEach(achievement => achievement.check(this));
+    }
+
+    // Quest System
+    initializeQuestPool() {
+        return [
+            { id: 1, description: 'Win 5 battles without resting', reward: { type: 'gold', amount: 120 }, check: (game, e, d, q) => {
+                if (e === 'battle_end' && d.win) { q.progress = (q.progress||0) + 1; if (q.progress >= 5) return true; }
+                if (e === 'rest') { q.progress = 0; }
+            }},
+            { id: 2, description: 'Deal 25 damage in one turn', reward: { type: 'gold', amount: 80 }, check: (game, e, d, q) => {
+                if (e === 'damage_dealt') { game.damageThisTurn += d.amount; }
+                if (e === 'end_turn') { if (game.damageThisTurn >= 25) return true; game.damageThisTurn = 0; }
+                if (e === 'start_turn') { game.damageThisTurn = 0; }
+            }},
+            { id: 3, description: 'Win a battle without playing defense cards', reward: { type: 'gold', amount: 80 }, check: (game, e, d, q) => {
+                if (e === 'card_played' && d.card.block > 0) { game.defenseCardPlayed = true; }
+                if (e === 'battle_end' && d.win) { if (!game.defenseCardPlayed) return true; }
+                if (e === 'battle_start') { game.defenseCardPlayed = false; }
+            }},
+            { id: 4, description: 'Defeat an enemy in 3 turns', reward: { type: 'gold', amount: 80 }, check: (game, e, d, q) => {
+                if (e === 'battle_start') { game.turnCounter = 0; }
+                if (e === 'end_turn') { game.turnCounter++; }
+                if (e === 'battle_end' && d.win) { if (game.turnCounter <= 3) return true; }
+            }},
+            { id: 5, description: 'Win a battle without taking damage', reward: { type: 'gold', amount: 60 }, check: (game, e, d, q) => {
+                if (e === 'damage_taken') { game.damageTakenThisBattle += d.amount; }
+                if (e === 'battle_start') { game.damageTakenThisBattle = 0; }
+                if (e === 'battle_end' && d.win) { if (game.damageTakenThisBattle === 0) return true; }
+            }},
+            { id: 6, description: 'Play 10 attacks in one battle', reward: { type: 'gold', amount: 60 }, check: (game, e, d, q) => {
+                if (e === 'card_played' && d.card.type === 'attack') { game.attackCardsThisBattle++; }
+                if (e === 'battle_start') { game.attackCardsThisBattle = 0; }
+                if (e === 'battle_end' && d.win) { if (game.attackCardsThisBattle >= 10) return true; }
+            }},
+            { id: 7, description: 'Gain 20 block in one turn', reward: { type: 'gold', amount: 60 }, check: (game, e, d, q) => {
+                if (e === 'block_gained') { game.blockThisTurn += d.amount; }
+                if (e === 'end_turn') { if (game.blockThisTurn >= 20) return true; game.blockThisTurn = 0; }
+                if (e === 'start_turn') { game.blockThisTurn = 0; }
+            }},
+            { id: 8, description: 'Spend 50 gold at merchants', reward: { type: 'card' }, check: (game, e, d, q) => {
+                if (e === 'gold_change' && d.amount < 0) { q.progress = (q.progress||0) - d.amount; if (q.progress >= 50) return true; }
+            }},
+            { id: 9, description: 'Reach 150 gold', reward: { type: 'gold', amount: 60 }, check: (game, e, d, q) => {
+                if (game.gold >= 150) return true; }
+            }
+        ];
+    }
+
+    getRandomQuests(n) {
+        const available = this.questPool.filter(q => !this.activeQuests.find(a => a.id === q.id));
+        const shuffled = available.sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, n).map(q => ({...q, progress:0, completed:false, claimed:false}));
+    }
+
+    acceptQuest(q) {
+        if (this.activeQuests.length >= 2) return;
+        this.activeQuests.push(q);
+        this.renderQuests();
+    }
+
+    cancelQuest(q) {
+        const idx = this.activeQuests.indexOf(q);
+        if (idx !== -1) {
+            // Simple penalty: lose 30 HP
+            this.playerHp = Math.max(0, this.playerHp - 30);
+            this.activeQuests.splice(idx, 1);
+            this.updatePlayerStats();
+            this.renderQuests();
+        }
+    }
+
+    claimQuestReward(q) {
+        if (this.battleActive) return;
+        if (q.reward.type === 'gold') {
+            this.addGold(q.reward.amount);
+        } else if (q.reward.type === 'card') {
+            this.addCardToDeck(getRandomCard());
+        }
+        q.claimed = true;
+        const idx = this.activeQuests.indexOf(q);
+        if (idx !== -1) this.activeQuests.splice(idx,1);
+        this.renderQuests();
+    }
+
+    renderQuests() {
+        this.questContainer.innerHTML = '';
+        this.activeQuests.forEach(q => {
+            const div = document.createElement('div');
+            div.className = 'quest-entry' + (q.completed ? ' completed' : '');
+            div.textContent = q.description;
+            if (q.completed && !q.claimed && !this.battleActive) {
+                const btn = document.createElement('button');
+                btn.textContent = 'Claim';
+                btn.onclick = () => this.claimQuestReward(q);
+                div.appendChild(btn);
+            }
+            this.questContainer.appendChild(div);
+        });
+    }
+
+    checkQuestProgress(event, data={}) {
+        this.activeQuests.forEach(q => {
+            if (!q.completed && q.check(this, event, data, q)) {
+                q.completed = true;
+            }
+        });
+        this.renderQuests();
     }
 }
 

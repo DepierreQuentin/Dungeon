@@ -210,6 +210,52 @@ body {
     z-index: 1000;
 }
 
+#quest-container {
+    position: fixed;
+    top: 20px;
+    right: 220px;
+    width: 200px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 0.9rem;
+    z-index: 1000;
+}
+
+.quest-entry {
+    margin-bottom: 5px;
+}
+
+.quest-entry.completed {
+    text-decoration: line-through;
+    color: #a0aec0;
+}
+
+#enemy-turn-indicator {
+    position: fixed;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 2rem;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 2000;
+}
+
+.enemy-turn-show {
+    animation: enemy-turn-fade 1s forwards;
+}
+
+@keyframes enemy-turn-fade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
 #player-section {
     position: fixed;
     bottom: 20px;
