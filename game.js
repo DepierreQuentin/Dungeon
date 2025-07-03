@@ -35,6 +35,9 @@ class CardGame {
         this.eventCardForSale = null;
         this.eventCardCost = 0;
 
+        // Track gold at the start of each battle
+        this.goldAtBattleStart = this.gold;
+
         // Pending rewards or damage to apply when the player continues
         this.pendingGold = 0;
         this.pendingHp = 0;
@@ -235,6 +238,7 @@ class CardGame {
         this.gold = 100;
         this.pendingGold = 0;
         this.pendingHp = 0;
+        this.goldAtBattleStart = this.gold;
         this.updateGoldDisplay();
         
         this.titleScreen.classList.add('hidden');
@@ -337,6 +341,9 @@ class CardGame {
         this.playerEnergy = this.playerMaxEnergy;
         this.playerBlock = 0;
         this.playerStatuses = {};
+
+        // Track gold gained during this battle
+        this.goldAtBattleStart = this.gold;
         
         // Get a random enemy
         this.currentEnemy = getRandomEnemy();
@@ -925,7 +932,8 @@ class CardGame {
         this.playerSection.classList.add('hidden');
         this.pendingGold = 0;
         this.pendingHp = 0;
-        this.rewardTextElement.textContent = 'No gold reward.';
+        const goldGained = this.gold - this.goldAtBattleStart;
+        this.rewardTextElement.textContent = `Gold gained: ${goldGained}`;
     }
     
     // Add a card to player's collection and deck if space allows
