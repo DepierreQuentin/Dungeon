@@ -1154,7 +1154,7 @@ class CardGame {
                 label.textContent = isNew ? 'New Card!' : '';
                 if (isNew) {
                     frontCard.classList.add('card-glow');
-                    setTimeout(() => this.playSound('newUnlock'), 500);
+                    setTimeout(() => this.playSound('newUnlock'), 300);
                 }
             });
 
