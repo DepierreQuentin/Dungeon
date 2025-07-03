@@ -38,7 +38,9 @@ class CardGame {
         // Pending rewards or damage to apply when the player continues
         this.pendingGold = 0;
         this.pendingHp = 0;
-        
+
+        this.loadSounds();
+
         this.initializeGame();
     }
     
@@ -383,6 +385,7 @@ class CardGame {
             this.pendingGold = gold;
             this.eventTextElement.textContent = `You found a treasure chest with ${gold} gold!`;
             this.eventScreen.style.background = "url('images/rooms/room_event_chest.png') no-repeat center / cover";
+            this.playSound('chest');
         } else if (roll < 0.7) {
             const damage = 5 + Math.floor(Math.random() * 6);
             this.pendingHp = -damage;
@@ -536,6 +539,15 @@ class CardGame {
             animateCardPlayed(cardElement, targetX, targetY);
         }
         
+        // Play attack sound before applying effects
+        if (playedCard.type === 'attack') {
+            if (playedCard.cost >= 2) {
+                this.playSound('heavyAttack');
+            } else {
+                this.playSound('attack');
+            }
+        }
+
         // Pay energy cost
         this.playerEnergy -= playedCard.cost;
         
@@ -657,6 +669,7 @@ class CardGame {
         this.playerBlock += amount;
         this.createFloatingText(amount, 'block-text', document.getElementById('player-stats'));
         this.addToBattleLog(`You gained ${amount} Block.`);
+        this.playSound('block');
         this.updatePlayerStats();
     }
     
@@ -671,6 +684,11 @@ class CardGame {
     addGold(amount) {
         this.gold += amount;
         this.updateGoldDisplay();
+        if (amount > 0) {
+            this.playSound('gainGold');
+        } else if (amount < 0) {
+            this.playSound('spendGold');
+        }
 
         if (this.goldDisplay) {
             const cls = amount >= 0 ? 'gold-text' : 'gold-loss-text';
@@ -716,6 +734,27 @@ class CardGame {
     applyEnemyStatus(status, value) {
         this.currentEnemy.applyStatus(status, value);
         this.addToBattleLog(`Enemy gained ${value} ${status}.`);
+    }
+
+    // Load audio files for various actions
+    loadSounds() {
+        this.sounds = {
+            attack: new Audio('audio/Atk_RR1_v2.ogg'),
+            heavyAttack: new Audio('audio/HeavyAtk_v2.ogg'),
+            block: new Audio('audio/GainDefense_RR1_v3.ogg'),
+            gainGold: new Audio('audio/Gold_RR1_v3.ogg'),
+            spendGold: new Audio('audio/CashRegister.ogg'),
+            chest: new Audio('audio/ChestOpen_v2.ogg')
+        };
+    }
+
+    // Play a sound by key
+    playSound(name) {
+        if (this.sounds && this.sounds[name]) {
+            const snd = this.sounds[name];
+            snd.currentTime = 0;
+            snd.play();
+        }
     }
     
     // Create floating text animation
