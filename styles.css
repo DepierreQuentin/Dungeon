@@ -310,7 +310,8 @@ body {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     position: relative;
     overflow: hidden;
-    
+    z-index: 1;
+
 }
 
 .card::before {
@@ -429,7 +430,7 @@ body {
 .card:hover {
     transform: translateY(-10px) scale(1.7);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-    z-index: 10; 
+    z-index: 50;
 }
 /*
 .card.common {
@@ -1057,6 +1058,12 @@ body {
     width: 140px;
     height: 200px;
     perspective: 1000px;
+    position: relative;
+    z-index: 1;
+}
+
+.flip-card:hover {
+    z-index: 50;
 }
 
 .flip-card-inner {
