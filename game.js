@@ -744,7 +744,8 @@ class CardGame {
             block: new Audio('audio/GainDefense_RR1_v3.ogg'),
             gainGold: new Audio('audio/Gold_RR1_v3.ogg'),
             spendGold: new Audio('audio/CashRegister.ogg'),
-            chest: new Audio('audio/ChestOpen_v2.ogg')
+            chest: new Audio('audio/ChestOpen_v2.ogg'),
+            cardDeal: new Audio('audio/STS_SFX_CardDeal8_v1.ogg')
         };
     }
 
@@ -1096,6 +1097,7 @@ class CardGame {
 
             flipCard.addEventListener('click', () => {
                 if (flipCard.classList.contains('flipped')) return;
+                this.playSound('cardDeal');
                 flipCard.classList.add('flipped');
                 label.textContent = isNew ? 'New Card!' : '';
                 if (isNew) {
